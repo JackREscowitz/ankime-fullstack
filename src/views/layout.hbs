@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        width: 100%;
+      }
+
+      ul li a {
+        display: block;
+        padding: 1rem;
+      }
+
+      .center-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+    </style>
+    <title>Ankime</title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li class="logo"><a href="/">Ankime</a></li>
+        <li><a href="/about">About</a></li>
+        {{#if user}}
+        <li><a href="/my-cards">My Cards</a></li>
+        <li><a href="/user/logout">Logout</a></li>
+        {{else}}
+        <li><a href="/user/register">Register</a></li>
+        <li><a href="/user/login">Login</a></li>
+        {{/if}}
+      </ul>
+    </nav>
+    {{{body}}}
+  </body>
+</html>

@@ -1,29 +1,30 @@
-# Animemorize
+# Ankime
 
 ## Overview
 
 Flashcard tools like Anki are effective for rote memorization, but they can get repetitive.  
-**Animemorize** brings Japanese learning to life by letting users upload screenshots from their favorite anime, along with the Japanese sentence and its vocabulary breakdown.  
+**Ankime** brings Japanese learning to life by letting users upload screenshots from their favorite anime, along with the Japanese sentence and its vocabulary breakdown.  
 
 Each screenshot becomes a *visual flashcard*, helping users connect words to real scenes.  
-Users can search by anime title, episode, or vocabulary to discover new words through meaningful context.
-
----
+Users can search by anime title, vocabulary, or uploader to discover new words through meaningful context.
 
 ## Data Model
 
 The application uses three main collections:
 
 1. **User**
-   - Stores user login information and tracks uploaded screenshots.
+   - Stores user login information.
 2. **Screenshot**
-   - Stores each uploaded anime scene with Japanese text, English translation, and metadata (anime name, episode, uploader).
+   - Stores each uploaded anime/manga scene with Japanese text, English translation, and metadata.
 3. **VocabEntry**
    - Stores vocabulary items linked to a screenshot, including readings, meanings, and notes.
+4. **UserCard**
+   - Stores screenshots that belong to users, such that they can be edited and reviewable.
 
 ### Relationships
-- Each **User** can upload multiple **Screenshots**.
-- Each **Screenshot** can have multiple **VocabEntries**.
+- Each **Screenshot** can point to a **User** (creator).
+- Multiple **VocabEntries** can point to a **Screenshot**.
+- Each **UserCard** can point to a **User** (owner) and **Screenshot**.
 
 ### Sample Documents
 
@@ -31,8 +32,7 @@ The application uses three main collections:
 ```javascript
 {
   username: "faust",
-  hash: "hashed_password_here",
-  uploads: [ObjectId("6720b123abc456def7890123")] // references to Screenshot documents
+  hash: // a password hash here
 }
 ```
 
@@ -40,19 +40,20 @@ The application uses three main collections:
 ```javascript
 {
   animeTitle: "Attack on Titan",
-  episode: 12,
   sentence: "世界は残酷だ。",
   translation: "The world is cruel.",
-  imageUrl: "https://res.cloudinary.com/animemorize/screenshots/attack12.png",
-  uploader: ObjectId("6720b123abc456def7890123"),
+  imageUrl: // cloud database URL,
+  public: true,
+  creator: // reference to User,
   createdAt: ISODate("2025-10-29T20:00:00Z")
+  updatedAt: ISODate("2025-11-13T20:00:00Z")
 }
 ```
 
 #### Example VocabEntry
 ```javascript
 {
-  screenshotId: ObjectId("6720b789abc456def7890123"),
+  screenshotId: // reference to Screenshot,
   word: "残酷",
   reading: "ざんこく",
   meaning: "cruel, harsh",
@@ -61,27 +62,48 @@ The application uses three main collections:
 }
 ```
 
+### Example UserCard
+```javascript
+{
+  user: // reference to User,
+  screenshot: // reference to Screenshot,
+
+  // Review State
+  isInReview: true,
+  interval: 16,
+  repetitions: 3,
+  easeFactor: 2.5,
+  nextReview: ISODate("2025-12-25T20:00:00Z")
+  createdAt: ISODate("2025-10-29T20:00:00Z"),
+  updatedAt: ISODate("2025-11-13T20:00:00Z")
+}
+```
+
 ---
 
 ## [Link to Commented First Draft Schema](models/db.mjs)
 
-Schemas for `User`, `Screenshot`, and `VocabEntry` are included and commented in `models/db.mjs`.
+Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and commented in `models/db.mjs`.
 
 ---
 
 ## Wireframes
 
-### `/` — Homepage  
+### `/` - Homepage  
 Displays search bar and list of recent uploads.  
 ![wireframe-home](documentation/wireframe-home.png)
 
-### `/upload` — Upload Screenshot Form  
+### `/upload` - Upload Screenshot Form  
 Form for adding new screenshots with sentence and translation.  
 ![wireframe-upload](documentation/wireframe-upload.png)
 
-### `/screenshot/:id` — Screenshot Detail  
-Displays image, sentence, translation, and vocab list with form to add new vocab words.  
-![wireframe-detail](documentation/wireframe-detail.png)
+### `/user/login` - Login Page
+Page for logging in with username and password.
+![wireframe-user-login](documentation/wireframe-user-login.png)
+
+### `/user/register` - Register Page
+Page for registering with username and password.
+![wireframe-user-register](documentation/wireframe-user-register.png)
 
 ---
 
@@ -90,10 +112,13 @@ Displays image, sentence, translation, and vocab list with form to add new vocab
 ```
 Home
  ├── Browse Screenshots (/browse)
- │     ├── Screenshot Detail (/screenshot/:id)
- │     │     ├── Add/Edit/Delete Vocab
- │     └── Upload Screenshot (/upload)
- └── About
+ ├── Register (/user/register)
+ ├── Login (/user/login)
+ ├── About (/about)
+ └── My Cards (/my-cards)
+       ├── Upload Screenshot (/upload)
+       ├── Browse My Cards (/browse)
+       └── Review (/review)
 ```
 
 ---
@@ -120,7 +145,7 @@ Home
 
 ---
 
-## [Link to Initial Main Project File](app.mjs)
+## [Link to Initial Main Project File](src/app.mjs)
 
 Skeleton Express app initialized with:
 - `express` and `mongoose`
