@@ -39,7 +39,7 @@ The application uses three main collections:
 #### Example Screenshot
 ```javascript
 {
-  animeTitle: "Attack on Titan",
+  title: "Attack on Titan",
   sentence: "世界は残酷だ。",
   translation: "The world is cruel.",
   imageUrl: // cloud database URL,

@@ -1,7 +1,8 @@
-<form action="POST">
-  <input type="text" name="title" required>
-  <textarea name="sentence" required></textarea>
-  <input type="text" name="translation">
+<h1>Upload Screenshot</h1>
+<form action="/upload-screenshot" enctype="multipart/form-data" method="post">
+  <input type="text" name="title" placeholder="Anime/Manga Title" required>
+  <textarea name="sentence" placeholder="Sentence" required></textarea>
+  <input type="text" name="translation" placeholder="Sentence Translation (Optional)">
   <input type="file" name="image" accept="image/*" required>
 
   <button type="submit">Upload</button>

@@ -12,6 +12,7 @@ router.get('/register', redirectIfAuthenticated, (req, res) => {
   res.render('register');
 });
 
+// TODO: add minimum password security somehow
 router.post('/register', async (req, res, next) => {
   try {
     const user = await User.register(

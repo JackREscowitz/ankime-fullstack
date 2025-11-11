@@ -1,34 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <style>
-      ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        position: fixed;
-        top: 0;
-        width: 100%;
-      }
-
-      ul li a {
-        display: block;
-        padding: 1rem;
-      }
-
-      .center-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-
-    </style>
     <title>Ankime</title>
   </head>
-  <body>
+  <body data-page="{{page}}">
     <nav>
       <ul>
         <li class="logo"><a href="/">Ankime</a></li>
@@ -43,5 +18,6 @@
       </ul>
     </nav>
     {{{body}}}
+    <script type="module" src="/js/main.js"></script>
   </body>
 </html>

@@ -12,6 +12,7 @@ import passport from 'passport';
 import { fileURLToPath } from 'url';
 import userRoutes from './routes/user.mjs';
 import homeRoute from './routes/home.mjs';
+import myCardsRoutes from './routes/myCards.mjs';
 import { notFound, errorHandler } from './middleware/errors.mjs'
 
 const app = express();
@@ -48,6 +49,7 @@ app.set('views', path.resolve(__dirname, 'views'));
 // Routes
 app.use(homeRoute);
 app.use('/user', userRoutes);
+app.use('/my-cards', myCardsRoutes);
 
 app.use(notFound);
 

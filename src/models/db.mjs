@@ -3,7 +3,9 @@
 import mongoose from "mongoose";
 import passportLocalMongoose from 'passport-local-mongoose';
 
-mongoose.connect(process.env.DSN);
+mongoose.connect(process.env.DSN)
+  .then(() => console.log("Successfully connected to MongoDB"))
+  .catch(err => console.log("Could not connect to MongoDB:", err));
 
 // Users
 const userSchema = new mongoose.Schema({});

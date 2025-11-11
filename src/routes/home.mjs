@@ -9,4 +9,6 @@ router.get('/', (req, res) => {
   res.render('home');
 })
 
+// TODO: implement browsing
+
 export default router;
