@@ -1,4 +1,4 @@
-// app.mjs
+// src/app.mjs
 
 // Note: side effects of importing envConfig.mjs and passportConfig.mjs mean
 // they only need to be imported in app.mjs
@@ -11,9 +11,9 @@ import path from 'path';
 import passport from 'passport';
 import { fileURLToPath } from 'url';
 import userRoutes from './routes/user.mjs';
-import homeRoute from './routes/home.mjs';
+import rootRoutes from './routes/root.mjs';
 import myCardsRoutes from './routes/myCards.mjs';
-import { notFound, errorHandler } from './middleware/errors.mjs'
+import { notFound, errorHandler } from './middleware/errors.mjs';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -47,7 +47,7 @@ app.set('view engine', 'hbs');
 app.set('views', path.resolve(__dirname, 'views'));
 
 // Routes
-app.use(homeRoute);
+app.use(rootRoutes);
 app.use('/user', userRoutes);
 app.use('/my-cards', myCardsRoutes);
 

@@ -1,4 +1,4 @@
-// db.mjs
+// src/models/db.mjs
 
 import mongoose from "mongoose";
 import passportLocalMongoose from 'passport-local-mongoose';
@@ -27,9 +27,27 @@ const screenshotSchema = new mongoose.Schema({
 const vocabSchema = new mongoose.Schema({
   screenshot: { type: mongoose.Schema.Types.ObjectId, ref: "Screenshot", required: true },
   word: { type: String, required: true },
-  reading: { type: String, required: true },
+  reading: { type: String },
   meaning: { type: String, required: true },
-  partOfSpeech: { type: String, required: true },
+  partOfSpeech: {
+    type: String,
+    enum: ['noun',                  // 名詞
+           'verb',                  // 動詞
+           'i-adjective',           // 形容詞
+           'na-adjective',          // 形容動詞
+           'adverb',                // 副詞
+           'pronoun',               // 代名詞
+           'particle',              // 助詞
+           'conjunction',           // 接続詞
+           'interjection',          // 感動詞
+           'auxiliary-verb',        // 助動詞
+           'prenominal',            // 連体詞
+           'prefix',                // 接頭辞
+           'suffix',                // 接尾辞
+           'other',                 // その他
+          ],
+    default: 'other'
+  },
   notes: String
 });
 

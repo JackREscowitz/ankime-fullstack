@@ -1,9 +1,45 @@
 <h1>Upload Screenshot</h1>
-<form action="/upload-screenshot" enctype="multipart/form-data" method="post">
-  <input type="text" name="title" placeholder="Anime/Manga Title" required>
-  <textarea name="sentence" placeholder="Sentence" required></textarea>
-  <input type="text" name="translation" placeholder="Sentence Translation (Optional)">
-  <input type="file" name="image" accept="image/*" required>
+<div id="upload-screenshot-form-container">
+  <form id="upload-screenshot-form" action="/upload-screenshot" enctype="multipart/form-data" method="post">
+    <input type="text" name="title" placeholder="Anime/Manga Title" required>
+    <textarea name="sentence" placeholder="Sentence" required></textarea>
+    <input type="text" name="translation" placeholder="Sentence Translation (Optional)">
+    <input type="file" name="image" accept="image/*" required>
 
-  <button type="submit">Upload</button>
-</form>
+    <button type="submit">Save</button>
+  </form>
+</div>
+
+<div id="upload-result"></div>
+
+<div id="upload-vocab-form-container" style="display: none">
+  <h2>Add Vocab Entry</h2>
+  <form id="upload-vocab-form" action="/upload-vocab" enctype="multipart/form-data" method="post">
+    <input type="text" name="word" placeholder="Word" required>
+    <input type="text" name="reading" placeholder="Reading (Optional)">
+    <input type="text" name="meaning" placeholder="Meaning" required>
+    <select name="partOfSpeech" required>
+      <option value="noun">Noun/名詞</option>
+      <option value="verb">Verb/動詞</option>
+      <option value="i-adjective">i-Adjective/形容詞</option>
+      <option value="na-adjective">na-Adjective/形容動詞</option>
+      <option value="adverb">Adverb/副詞</option>
+      <option value="pronoun">Pronoun/代名詞</option>
+      <option value="particle">Particle/助詞</option>
+      <option value="conjunction">Conjunction/接続詞</option>
+      <option value="interjection">Interjection/感動詞</option>
+      <option value="auxiliary-verb">Auxiliary Verb/助動詞</option>
+      <option value="prenominal">Prenominal/連体詞</option>
+      <option value="prefix">Prefix/接頭辞</option>
+      <option value="suffix">Suffix/接尾辞</option>
+      <option value="other">Other/その他</option>
+    </select>
+    <textarea name="notes" placeholder="Notes"></textarea>
+
+    <button type="submit">Add</button>
+  </form>
+
+  <a href="/my-cards/upload">Upload Another Screenshot</a>
+</div>
+
+<script type="module" src="/js/pages/upload.js"></script>

@@ -1,0 +1,18 @@
+// src/routes/root.mjs
+// Root routes
+
+import express from 'express';
+
+const router = express.Router();
+
+router.get('/', (req, res) => {
+  res.render('home');
+})
+
+router.get('/about', (req, res) => {
+  res.render('about');
+})
+
+// TODO: implement browsing, should allow downloading if authenticated
+
+export default router;

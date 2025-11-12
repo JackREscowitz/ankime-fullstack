@@ -1,10 +1,10 @@
-// user.mjs
+// src/routes/user.mjs
 // All routes related to user registration and login
 
 import express from 'express';
 import passport from 'passport';
 import { User } from '../models/db.mjs';
-import { redirectIfAuthenticated } from '../middleware/auth.mjs';
+import { redirectIfAuthenticated } from '../middleware/authn.mjs';
 
 const router = express.Router();
 
@@ -24,8 +24,8 @@ router.post('/register', async (req, res, next) => {
       if (err) return next(err);
       return res.redirect('/');
     });
-  } catch (err) {
-    return res.render('register', { message: "Invalid registration information." });
+  } catch (err) { // TODO: change to be AJAX instead of reload maybe?
+    return res.render('register', { message: err.message });
   }
 });
 
@@ -35,6 +35,7 @@ router.get('/login', redirectIfAuthenticated, (req, res) => {
 
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
+    // TODO: change to be AJAX instead of reload maybe?
     if (err) return next(err);
     if (!user) return res.render('login', { message: info?.message || "Bad credentials." });
     req.logIn(user, (err) => {
