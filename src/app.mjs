@@ -14,6 +14,7 @@ import userRoutes from './routes/user.mjs';
 import rootRoutes from './routes/root.mjs';
 import myCardsRoutes from './routes/myCards.mjs';
 import { notFound, errorHandler } from './middleware/errors.mjs';
+import { connectDB } from './models/db.mjs';
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -51,9 +52,11 @@ app.use(rootRoutes);
 app.use('/user', userRoutes);
 app.use('/my-cards', myCardsRoutes);
 
+// Errors
 app.use(notFound);
-
 app.use(errorHandler);
+
+await connectDB();
 
 app.listen(process.env.PORT ?? 3000, () => {
   console.log("Started server");

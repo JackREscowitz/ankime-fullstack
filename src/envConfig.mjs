@@ -1,4 +1,4 @@
-// envConfig.mjs
+// src/envConfig.mjs
 
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
