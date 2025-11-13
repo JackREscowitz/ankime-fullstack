@@ -19,11 +19,18 @@ https://final-project-jackrescowitz.onrender.com/my-cards/upload
 
 URL(s) to github repository with commits that show progress on research
 --- 
-[Multer](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/ff8672fa24a04610f04bf72d320144117c105fe5/main/src/routes/myCards.mjs)
+Commit: ff8672fa24a04610f04bf72d320144117c105fe5
+[Multer](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/ff8672fa24a04610f04bf72d320144117c105fe5/src/routes/myCards.mjs)
 
-[Anilist API](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/)
+Commit: 45e1c63a0360db5cb079f5f9eefdec3f88d0b856
+[Anilist API](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/45e1c63a0360db5cb079f5f9eefdec3f88d0b856/src/scripts/syncAnilist.mjs)
 
 
 References 
 ---
-(TODO: if applicable, links to annotated lines of code in github repository that were based off of tutorials / articles / sample projects)
+- [Anilist API Docs](https://docs.anilist.co/guide/graphql/pagination)
+- [Relevant File](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/main/src/scripts/syncAnilist.mjs)
+
+- [Multer npm Documentation](https://www.npmjs.com/package/multer)
+- [Relevant File](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/main/src/routes/myCards.mjs)
+Lines 20-32, Line 43

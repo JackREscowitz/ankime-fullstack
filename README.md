@@ -10,7 +10,7 @@ Users can search by anime title, vocabulary, or uploader to discover new words t
 
 ## Data Model
 
-The application uses three main collections:
+The application uses five collections:
 
 1. **User**
    - Stores user login information.
@@ -20,6 +20,8 @@ The application uses three main collections:
    - Stores vocabulary items linked to a screenshot, including readings, meanings, and notes.
 4. **UserCard**
    - Stores screenshots that belong to users, such that they can be edited and reviewable.
+5. **AniTitle**
+   - Stores anime/manga titles, regularly made up to date via Anilist API.
 
 ### Relationships
 - Each **Screenshot** can point to a **User** (creator).
@@ -79,6 +81,17 @@ The application uses three main collections:
 }
 ```
 
+### Example AniTitle
+```javascript
+{
+  anilist_id: 123,
+  title: "Attack on Titan",
+  native_title: "Shingeki no Kyojin",
+  type: "MANGA",
+  image_url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20.jpg",
+  updated_at: ISODate("2025-11-13T20:00:00Z")
+}
+```
 ---
 
 ## [Link to Commented First Draft Schema](models/db.mjs)
@@ -93,17 +106,21 @@ Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and 
 Displays search bar and list of recent uploads.  
 ![wireframe-home](documentation/wireframe-home.png)
 
-### `/upload` - Upload Screenshot Form  
-Form for adding new screenshots with sentence and translation.  
-![wireframe-upload](documentation/wireframe-upload.png)
-
-### `/user/login` - Login Page
-Page for logging in with username and password.
+### `/user/login` - Login Page  
+Page for logging in with username and password.  
 ![wireframe-user-login](documentation/wireframe-user-login.png)
 
-### `/user/register` - Register Page
-Page for registering with username and password.
+### `/user/register` - Register Page  
+Page for registering with username and password.  
 ![wireframe-user-register](documentation/wireframe-user-register.png)
+
+### `/my-cards` - My Cards Page  
+Page for actions relevant to cards the user owns.  
+![wireframe-my-cards](documentation/wireframe-my-cards.png)
+
+### `/my-cards/upload` - Upload Screenshot Page  
+Page for uploading screenshots and adding vocab entries.  
+![wireframe-my-cards-upload](documentation/wireframe-my-cards-upload.png)
 
 ---
 
@@ -139,21 +156,14 @@ Home
 |-------|--------------|--------|
 | **Tailwind CSS** | For styling and responsive anime-themed UI | 2 |
 | **ESLint + Vite** | For build automation and linting workflow | 3 |
-| **Cloudinary API** | For image upload and hosting integration | 3 |
-| **Kuromoji.js** | For parsing Japanese text into vocabulary suggestions | 2 |
-| **Total** |  | **10** |
+| **Multer** | For screenshot upload | 1 |
+| **AWS S3** | For image hosting in the cloud | 3 |
+| **AniList API** | For fetching up to date list of anime/manga | 2 |
+| **Total** |  | **11** |
 
 ---
 
 ## [Link to Initial Main Project File](src/app.mjs)
-
-Skeleton Express app initialized with:
-- `express` and `mongoose`
-- `app.mjs` for server setup
-- `.gitignore`, `package.json`
-- `models/` for schemas  
-- `views/` folder for templates  
-- `public/` for static assets
 
 ---
 
@@ -161,6 +171,6 @@ Skeleton Express app initialized with:
 
 1. Express documentation — server setup reference  
 2. Mongoose docs — schema examples  
-3. Cloudinary Node.js SDK docs — image upload integration  
-4. Kuromoji.js GitHub — Japanese tokenizer for vocab suggestions  
+3. NPM documentation
+4. Anilist API docs
 5. Tailwind CSS docs — styling  
