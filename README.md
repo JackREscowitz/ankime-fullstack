@@ -88,7 +88,6 @@ The application uses five collections:
   title: "Attack on Titan",
   native_title: "Shingeki no Kyojin",
   type: "MANGA",
-  image_url: "https://s4.anilist.co/file/anilistcdn/media/anime/cover/medium/bx20.jpg",
   updated_at: ISODate("2025-11-13T20:00:00Z")
 }
 ```

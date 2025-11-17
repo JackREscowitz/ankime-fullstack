@@ -1,5 +1,5 @@
-// src/routes/root.mjs
-// Root routes
+// src/routes/pages/rootPages.mjs
+// Root page routes
 
 import express from 'express';
 

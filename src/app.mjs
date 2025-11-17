@@ -10,9 +10,18 @@ import session from 'express-session';
 import path from 'path';
 import passport from 'passport';
 import { fileURLToPath } from 'url';
-import userRoutes from './routes/user.mjs';
-import rootRoutes from './routes/root.mjs';
-import myCardsRoutes from './routes/myCards.mjs';
+
+// Page routes
+import userPageRoutes from './routes/pages/userPages.mjs';
+import rootRoutes from './routes/pages/rootPages.mjs';
+import myCardsRoutes from './routes/pages/myCardsPages.mjs';
+
+// API routes
+import userApiRoutes from './routes/api/usersApi.mjs';
+import screenshotRoutes from './routes/api/screenshotsApi.mjs';
+import vocabRoutes from './routes/api/vocabApi.mjs';
+import searchRoutes from './routes/api/search.mjs';
+
 import { notFound, errorHandler } from './middleware/errors.mjs';
 import { connectDB } from './models/db.mjs';
 
@@ -47,10 +56,16 @@ app.use(express.json());
 app.set('view engine', 'hbs');
 app.set('views', path.resolve(__dirname, 'views'));
 
-// Routes
+// Page Routes
 app.use(rootRoutes);
-app.use('/user', userRoutes);
+app.use('/user', userPageRoutes);
 app.use('/my-cards', myCardsRoutes);
+
+// API routes
+app.use('/api/users', userApiRoutes);
+app.use('/api/screenshots', screenshotRoutes);
+app.use('/api/vocab', vocabRoutes);
+app.use('/api/search', searchRoutes);
 
 // Errors
 app.use(notFound);

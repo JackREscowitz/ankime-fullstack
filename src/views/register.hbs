@@ -1,8 +1,9 @@
 <h1>Register</h1>
-<form method="post">
-  <input type="text" name="username" placeholder="username" required>
-  <input type="text" name="password" placeholder="password" required>
+<form id="register-form" action="/api/users/register" method="post">
+  <input type="text" name="username" placeholder="username" autocomplete="false" required>
+  <input type="text" name="password" placeholder="password" autocomplete="false" required>
   <button type="submit">Register</button>
-  {{#if message}}<p>{{message}}</p>{{/if}}
 </form>
-</div>
+<div id="error-container"></div>
+
+<script type="module" src="/js/pages/register.js"></script>

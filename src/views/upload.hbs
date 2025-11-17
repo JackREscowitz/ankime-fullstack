@@ -1,7 +1,9 @@
 <h1>Upload Screenshot</h1>
 <div id="upload-screenshot-form-container">
-  <form id="upload-screenshot-form" action="/upload-screenshot" enctype="multipart/form-data" method="post">
-    <input type="text" name="title" placeholder="Anime/Manga Title" required>
+  <form id="upload-screenshot-form" action="/api/screenshots" enctype="multipart/form-data" method="post">
+    <input id="title-search" type="text" placeholder="Anime/Manga Title" required>
+    <div id="title-results" class="dropdown"></div>
+    <input id="anilist-id" type="hidden" name="anilist_id">
     <textarea name="sentence" placeholder="Sentence" required></textarea>
     <input type="text" name="translation" placeholder="Sentence Translation (Optional)">
     <input type="file" name="image" accept="image/*" required>
@@ -14,7 +16,7 @@
 
 <div id="upload-vocab-form-container" style="display: none">
   <h2>Add Vocab Entry</h2>
-  <form id="upload-vocab-form" action="/upload-vocab" enctype="multipart/form-data" method="post">
+  <form id="upload-vocab-form" action="/api/vocab" enctype="multipart/form-data" method="post">
     <input type="text" name="word" placeholder="Word" required>
     <input type="text" name="reading" placeholder="Reading (Optional)">
     <input type="text" name="meaning" placeholder="Meaning" required>

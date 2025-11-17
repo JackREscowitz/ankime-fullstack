@@ -7,8 +7,7 @@ const aniTitleSchema = new mongoose.Schema({
   title: { type: String, required: true },
   native_title: String,
   type: { type: String, enum: ["ANIME", "MANGA"], required: true },
-  image_url: String,
   updated_at: { type: Date, default: Date.now },
-});
+}, { versionKey: false });
 
 export const AniTitle = mongoose.model("AniTitle", aniTitleSchema);

@@ -1,7 +1,9 @@
 <h1>Log In</h1>
-<form method="post">
-  <input type="text" name="username" placeholder="username" required>
-  <input type="password" name="password" placeholder="password" required>
+<form id="login-form" action="/api/users/login" method="post">
+  <input type="text" name="username" placeholder="username" autocomplete="false" required>
+  <input type="password" name="password" placeholder="password" autocomplete="false" required>
   <button type="submit">Log In</button>
-  {{#if message}}<p>{{message}}</p>{{/if}}
 </form>
+<div id="error-container"></div>
+
+<script type="module" src="/js/pages/login.js"></script>

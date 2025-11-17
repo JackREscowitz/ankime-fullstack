@@ -1,4 +1,6 @@
 // src/middleware/errors.mjs
+// All back-end errors lead to here, front-end errors use console.error()
+// Response: { success: false, message: err.message }
 
 import multer from 'multer';
 
@@ -8,28 +10,40 @@ export function notFound(req, res, next) {
   next(err);
 }
 
-// TODO: Can set err.message before calling next(err) in each route
 export function errorHandler(err, req, res, next) {
+  if (err.name === "MissingUsernameError" || err.name === "MissingPasswordError") {
+    err.status = err.status || 400;
+    err.publicMessage = err.publicMessage || "Username and password are required.";
+  } else if (err.name === "UserExistsError" || err.code === 11000) {
+    err.status = err.status || 409;
+    err.publicMessage = err.publicMessage || "Username already taken.";
+  } else if (err.name === "ValidationError") { // Violates Mongoose schema
+    err.status = err.status || 400;
+    err.publicMessage = err.publicMessage || "Invalid data provided.";
+  } else if (err instanceof multer.MulterError) {
+    err.status = err.status || 400;
+    switch (err.code) {
+      case 'LIMIT_FILE_SIZE':
+        err.publicMessage = err.publicMessage || "File too large.";
+        break;
+      case 'LIMIT_FILE_COUNT':
+        err.publicMessage = err.publicMessage || "Too many files uploaded.";
+        break;
+      case 'LIMIT_UNEXPECTED_FILE':
+        err.publicMessage = err.publicMessage || "Unexpected file upload.";
+        break;
+      default:
+        err.publicMessage = err.publicMessage || "File upload error.";
+    }
+  }
+
+  // If status hasn't been assigned yet, code is generic server error
   const status = err.status || err.statusCode || 500;
+  const message = status >= 500 ? "Internal server error." : err.publicMessage || err.message || "Unexpected error.";
+  if (status >= 500) console.error(err); // Only log server errors
 
-  if (err instanceof multer.MulterError || err.message?.includes("Only image files")) {
-    return res.status(400).json({ success: false, message: err.message });
-  }
-  if (err.name === "ValidationError") {
-    return res.status(400).json({ success: false, message: err.message });
-  }
-  if (status === 401 || status === 403) { // Because of redirectIfAuthenticated
-  // should not ever have status 401 but include in case
-    return res.status(status).json({ success: false, message: err.message || "Unauthorized" });
-  }
-  if (status === 404) { // notFound
-    return res.status(404).json({ success: false, message: err.message });
-  }
-
-  // Generic fallback
-  console.error("Unhandled error:", err);
   res.status(status).json({
     success: false,
-    message: status === 500 ? "Internal server error." : err.message || "Unexpected error." 
+    message
   });
 }

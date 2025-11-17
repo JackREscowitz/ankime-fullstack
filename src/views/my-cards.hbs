@@ -3,10 +3,13 @@
 
 <a href="/my-cards/settings">Review Settings</a>
 
-<!-- Should send to a url when the user presses enter -->
-<form>
-  <input type="text" name="title" placeholder="Search by Anime/Manga Title">
-  <input type="text" name="vocab" placeholder="Search by Vocabulary">
+<form id="search-form">
+  <input id="search-input" type="text" name="q" placeholder="Search by Title or Vocab">
+  <button type="submit">Search</button>
 </form>
 
 <a href="/my-cards/upload">Upload Screenshot</a>
+
+<div id="cards-container"></div>
+
+<script type="module" src="/js/pages/myCards.js"></script>

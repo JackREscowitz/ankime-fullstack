@@ -1,4 +1,5 @@
 // src/models/db.mjs
+// User, Screenshot, VocabEntry, UserCard
 
 import mongoose from "mongoose";
 import passportLocalMongoose from 'passport-local-mongoose';
@@ -21,7 +22,10 @@ userSchema.plugin(passportLocalMongoose);
 
 // Screenshots
 const screenshotSchema = new mongoose.Schema({
-  title: { type: String, required: true },
+  // title: { type: String, required: true },
+  // Each screenshot now points to unique AniTitle ID instead of String title
+  // This should help with title input field dropdown
+  anilist_id: { type: Number, required: true }, 
   sentence: { type: String, required: true },
   translation: String,
   imageUrl: { type: String, required: true },
