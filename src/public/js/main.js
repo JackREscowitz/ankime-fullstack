@@ -27,34 +27,43 @@ export function createElement(tag, text, attrs = {}) {
 }
 
 // TODO: implement editing, don't have time now for it
-// handleAdd(screenshot, vocabEntries, cardDiv, addBtn)
+// btnFunctions = {
+//   handleAddToMyCards: function,
+//   handleDelete: function,
+//   handlePublicToggle: function
+// }
+// handleAddToMyCards(screenshot, cardDiv, addBtn)
 // handleDelete(screenshot, vocabEntries, cardDiv, deleteBtn)
 // handlePublicToggle(screenshot, cardDiv, publicToggleBtn)
-export function createCard(screenshot, vocabEntries, ani, handleAdd, handleDelete, handlePublicToggle) {
+export function createCard(screenshot, vocabEntries, ani, btnFunctions) {
+  btnFunctions = btnFunctions || {};
+
   const cardDiv = createElement('div');
   const screenshotDiv = createScreenshot(screenshot, ani, null);
   cardDiv.appendChild(screenshotDiv);
+
   vocabEntries.forEach(entry => {
     const vocabDiv = createVocabItem(entry, POS_LABELS, null);
     cardDiv.appendChild(vocabDiv);
   });
-  if (handleAdd) {
+  
+  if (btnFunctions.handleAddToMyCards) {
     const addBtn = createElement('button', 'Add to My Cards');
     addBtn.addEventListener('click', () => 
-      handleAdd(screenshot, vocabEntries, cardDiv, addBtn));
+      btnFunctions.handleAddToMyCards(screenshot, cardDiv, addBtn));
     cardDiv.appendChild(addBtn);  }
 
-  if (handleDelete) {
+  if (btnFunctions.handleDelete) {
     const deleteBtn = createElement('button', 'Delete Card');
     deleteBtn.addEventListener('click', () => 
-      handleDelete(screenshot, cardDiv, deleteBtn));
+      btnFunctions.handleDelete(screenshot, cardDiv, deleteBtn));
     cardDiv.appendChild(deleteBtn);
   }
 
-  if (handlePublicToggle) {
+  if (btnFunctions.handlePublicToggle) {
     const publicToggleBtn = createElement('button', `${screenshot.public ? "Remove from Public" : "Make Public"}`);
     publicToggleBtn.addEventListener('click', () => 
-      handlePublicToggle(screenshot, cardDiv, publicToggleBtn));
+      btnFunctions.handlePublicToggle(screenshot, cardDiv, publicToggleBtn));
     cardDiv.appendChild(publicToggleBtn);
   }
   return cardDiv;

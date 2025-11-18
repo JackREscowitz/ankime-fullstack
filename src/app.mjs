@@ -21,6 +21,7 @@ import userApiRoutes from './routes/api/usersApi.mjs';
 import screenshotRoutes from './routes/api/screenshotsApi.mjs';
 import vocabRoutes from './routes/api/vocabApi.mjs';
 import searchRoutes from './routes/api/search.mjs';
+import reviewRoutes from './routes/api/reviewApi.mjs';
 
 import { notFound, errorHandler } from './middleware/errors.mjs';
 import { connectDB } from './models/db.mjs';
@@ -66,6 +67,7 @@ app.use('/api/users', userApiRoutes);
 app.use('/api/screenshots', screenshotRoutes);
 app.use('/api/vocab', vocabRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/review', reviewRoutes);
 
 // Errors
 app.use(notFound);

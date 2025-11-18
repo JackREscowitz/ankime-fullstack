@@ -128,7 +128,7 @@ uploadVocabForm.addEventListener('submit', async (evt) => {
     }
   } catch (err) {
     console.error(err);
-    alert("Failed to add vocabulary.");
+    alert(`Failed to add vocabulary: ${err.message}`);
   }
 });
 
@@ -152,7 +152,7 @@ async function handleScreenshotDelete(screenshot, container, deleteBtn) {
     }
   } catch (err) {
     console.error(err);
-    alert("Failed to delete screenshot.");
+    alert(`Failed to delete screenshot: ${err.message}`);
     deleteBtn.disabled = false;
   }
 }
@@ -173,7 +173,7 @@ async function handleVocabDelete(vocab, container, deleteBtn) {
     }
   } catch (err) {
     console.error(err);
-    alert("Failed to delete vocabulary entry.");
+    alert(`Failed to delete vocabulary entry: ${err.message}`);
     deleteBtn.disabled = false;
   }
 }

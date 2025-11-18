@@ -3,7 +3,7 @@
 /**
  * /screenshots routes
  *
- * All routes require authentication (ensureAuthn).
+ * All routes require authentication (ensureAuthnApi).
  *
  * These routes now use MongoDB aggregation ($lookup) to attach AniTitle
  * information based on the numeric `anilist_id` field. We do NOT use
@@ -129,9 +129,10 @@ import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { Screenshot, UserCard, VocabEntry } from '../../models/db.mjs';
-import { ensureAuthn } from '../../middleware/authn.mjs';
+import { ensureAuthnApi } from '../../middleware/authn.mjs';
 import { verifyScreenshotOwnership } from '../../middleware/authz.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -157,7 +158,7 @@ const upload = multer({
   }
 });
 
-router.get('/', ensureAuthn, async (req, res, next) => {
+router.get('/', ensureAuthnApi, async (req, res, next) => {
   console.log("GET /api/screenshots");
   try {
     const pipeline = [
@@ -183,7 +184,7 @@ router.get('/', ensureAuthn, async (req, res, next) => {
 });
 
 // TODO: verify file type using file-type with s3 (not local uploads)
-router.post('/', ensureAuthn, upload.single('image'), async (req, res, next) => {
+router.post('/', ensureAuthnApi, upload.single('image'), async (req, res, next) => {
   console.log("POST /api/screenshots")
   console.log("req.body:\n", req.body);
   console.log("req.file:\n", req.file);
@@ -233,7 +234,80 @@ router.post('/', ensureAuthn, upload.single('image'), async (req, res, next) => 
   }
 });
 
-router.get('/:id', ensureAuthn, async (req, res, next) => {
+router.post('/clone/:id', ensureAuthnApi, async (req, res, next) => {
+  console.log("POST /api/screenshots/clone/:id");
+  try {
+
+    // Clone screenshot with same metadata and reused image
+    const originalScreenshot = await Screenshot.findById(req.params.id);
+    if (!originalScreenshot) {
+      const err = new Error("Failed to clone screenshot, original screenshot not found.");
+      err.status = 404;
+      return next(err);
+    }
+
+    // Cannot clone your own screenshot
+    if (originalScreenshot.creator.equals(req.user._id)) {
+      return res.status(400).json({
+        success: false,
+        message: "This card already belongs to you."
+      })
+    }
+
+    const cloneScreenshot = await Screenshot.create({
+      anilist_id: originalScreenshot.anilist_id,
+      sentence: originalScreenshot.sentence,
+      translation: originalScreenshot.translation,
+      imageUrl: originalScreenshot.imageUrl,
+      creator: req.user._id
+    });
+
+    // Clone vocab entries
+    const originalVocab = await VocabEntry.find({ screenshot: originalScreenshot._id });
+    if (originalVocab.length > 0) {
+      const cloneVocab = originalVocab.map(v => ({
+        word: v.word,
+        reading: v.reading,
+        meaning: v.meaning,
+        type: v.type,
+        screenshot: cloneScreenshot._id,
+        user: req.user._id
+      }));
+
+      await VocabEntry.insertMany(cloneVocab);
+    }
+
+    // Each screenshot automatically gets a UserCard
+    await UserCard.create({
+      user: req.user._id,
+      screenshot: cloneScreenshot._id
+    });
+
+    // Get the corresponding AniTitle
+    const pipeline = [
+      { $match: { _id: cloneScreenshot._id } },
+
+      {
+        $lookup: {
+          from: "anititles",
+          localField: "anilist_id",
+          foreignField: "anilist_id",
+          as: "ani"
+        }
+      },
+      { $unwind: "$ani" }
+    ];
+
+    const cloneWithAni = (await Screenshot.aggregate(pipeline))[0];
+
+    console.log("Cloned Screenshot:", cloneWithAni);
+    res.json({ success: true, screenshot: cloneWithAni });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.get('/:id', ensureAuthnApi, async (req, res, next) => {
   console.log("GET /api/screenshots/:id");
   try {
     await verifyScreenshotOwnership(req.params.id, req.user._id);
@@ -261,7 +335,7 @@ router.get('/:id', ensureAuthn, async (req, res, next) => {
   }
 });
 
-router.patch('/:id', ensureAuthn, async (req, res, next) => {
+router.patch('/:id', ensureAuthnApi, async (req, res, next) => {
   console.log("PATCH /api/screenshots/:id");
   try {
     await verifyScreenshotOwnership(req.params.id, req.user._id);
@@ -275,18 +349,36 @@ router.patch('/:id', ensureAuthn, async (req, res, next) => {
 });
 
 // TODO: also delete image file from uploads (or s3)
-router.delete('/:id', ensureAuthn, async (req, res, next) => {
+router.delete('/:id', ensureAuthnApi, async (req, res, next) => {
   console.log("DELETE /api/screenshots/:id");
 
   try {
     const screenshotId = req.params.id;
     await verifyScreenshotOwnership(screenshotId, req.user._id);
 
+    const screenshot = await Screenshot.findById(screenshotId);
+    const imageUrl = screenshot.imageUrl;
+
     await VocabEntry.deleteMany({ screenshot: screenshotId });
 
     await UserCard.deleteOne({ screenshot: screenshotId });
 
     await Screenshot.deleteOne({ _id: screenshotId });
+
+    // If there are no screenshots that still use this same iamge, delete the file
+    const count = await Screenshot.countDocuments({ imageUrl });
+    if (count === 0) {
+      // TODO: change this for s3
+      try {
+        const filePath = path.join(__dirname, '../../public', imageUrl);
+        await fs.unlink(filePath);
+        console.log("Deleted unused image:", filePath);
+      } catch (err) {
+        console.error("Non-fatal error: Failed to delete image file", err);
+      }
+    } else {
+      console.log(`Image still used by ${count} screenshots, not deleting file.`);
+    }
 
     console.log("Deleted Screenshot ID:", screenshotId);
     res.json({ success: true });

@@ -2,7 +2,7 @@
 // All middleware related to authorization
 
 import mongoose from 'mongoose';
-import { Screenshot, VocabEntry } from '../models/db.mjs';
+import { Screenshot, VocabEntry, UserCard } from '../models/db.mjs';
 
 export async function verifyScreenshotOwnership(screenshotId, userId) {
   if (!mongoose.isValidObjectId(screenshotId)) {
@@ -42,4 +42,24 @@ export async function verifyVocabOwnership(vocabId, userId) {
     throw err;
   }
   return vocab;
+}
+
+export async function verifyUserCardOwnership(userCardId, userId) {
+  if (!mongoose.isValidObjectId(userCardId)) {
+    const err = new Error('Invalid user card id');
+    err.status = 400;
+    throw err;
+  }
+  const userCard = await UserCard.findById(userCardId).lean();
+  if (!userCard) {
+    const err = new Error('User card not found.');
+    err.status = 404;
+    throw err;
+  }
+  if (String(userCard.user) !== String(userId)) {
+    const err = new Error('Not authorized to modify this user card.');
+    err.status = 403;
+    throw err;
+  }
+  return userCard;
 }

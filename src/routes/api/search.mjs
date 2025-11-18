@@ -4,7 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import { AniTitle } from '../../models/aniTitle.mjs';
 import { UserCard, Screenshot } from '../../models/db.mjs';
-import { ensureAuthn } from '../../middleware/authn.mjs';
+import { ensureAuthnApi } from '../../middleware/authn.mjs';
 
 
 const router = express.Router();
@@ -17,7 +17,7 @@ const router = express.Router();
 //       username: String
 //     },
 //     ani: AniTitle,
-//     vocab: VocabEntry
+//     vocab: [VocabEntry]
 //   }
 // ]
 router.get('/', async (req, res, next) => {
@@ -95,7 +95,7 @@ router.get('/', async (req, res, next) => {
   }
 });
 
-router.get('/my-cards', ensureAuthn, async (req, res, next) => {
+router.get('/my-cards', ensureAuthnApi, async (req, res, next) => {
   try {
     const userId = req.user._id;
     const q = (req.query.q || '').trim();

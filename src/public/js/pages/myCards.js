@@ -15,15 +15,15 @@ async function search() {
 
     if (data.success) {
       data.results.forEach(result => {
-        const card = createCard(result.shot, result.vocab, result.ani, null, handleCardDelete, handlePublicToggle);
+        const card = createCard(result.shot, result.vocab, result.ani, { handleDelete, handlePublicToggle });
         cardsContainer.appendChild(card);
       });
     } else {
-      throw new Error(result.message);
+      throw new Error(data.message);
     }
   } catch (err) {
     console.error(err);
-    alert("Failed to perform search.");
+    alert(`Failed to perform search: ${err.message}`);
   }
 }
 
@@ -35,7 +35,7 @@ searchForm.addEventListener('submit', (evt) => {
 // Initial load
 search();
 
-async function handleCardDelete(screenshot, cardDiv, deleteBtn) {
+async function handleDelete(screenshot, cardDiv, deleteBtn) {
   if (!confirm("Are you sure you want to delete this card? This action cannot be undone.")) return;
 
   deleteBtn.disabled = true;
@@ -50,7 +50,7 @@ async function handleCardDelete(screenshot, cardDiv, deleteBtn) {
     }
   } catch (err) {
     console.error(err);
-    alert("Failed to delete card.");
+    alert(`Failed to delete card: ${err.message}`);
     deleteBtn.disabled = false;
   }
 }
@@ -79,7 +79,7 @@ async function handlePublicToggle(screenshot, cardDiv, publicToggleBtn) {
     // Reverse updates in case of error
     screenshot.public = !newPublicState;
     publicToggleBtn.textContent = screenshot.public ? "Remove from Public" : "Make Public";
-    alert("Failed to update public status.");
+    alert(`Failed to update public status: ${err.message}`);
   } finally {
     publicToggleBtn.disabled = false;
   }

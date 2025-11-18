@@ -76,11 +76,11 @@ const userCardSchema = new mongoose.Schema({
   screenshot: { type: mongoose.Schema.Types.ObjectId, ref: "Screenshot", required: true },
 
   // Review State
-  isInReview: { type: Boolean, default: false },
-  interval: { type: Number, default: null },
-  repetitions: { type: Number, default: 0 },
-  easeFactor: { type: Number, default: 2.5 },
-  nextReview: { type: Date, default: null }
+  isInReview: { type: Boolean, default: true }, // Is it in the review rotation at all
+  interval: { type: Number, default: 0 },       // How many days until next review
+  repetitions: { type: Number, default: 0 },    // Successful review in a row
+  easeFactor: { type: Number, default: 2.5 },   // SM-2 algorithm variable
+  nextReview: { type: Date, default: () => new Date() }
 }, { timestamps: true });
 
 export const User = mongoose.model("User", userSchema);
