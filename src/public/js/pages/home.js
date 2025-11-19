@@ -1,37 +1,83 @@
 // src/public/js/pages/home.js
 
-import { createElement, createCard } from "../main.js";
+import { createElement, createCard, showToast, showConfirm } from "../main.js";
 
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const cardsContainer = document.getElementById('cards-container');
+const searchMessageDiv = document.getElementById('search-message');
 const loggedIn = document.body.dataset.loggedIn === "true";
 
+let loadingTimeoutId = null;
+
 async function search() {
+  const query = searchInput.value.trim();
+
+  if (loadingTimeoutId !== null) {
+    clearTimeout(loadingTimeoutId);
+    loadingTimeoutId = null;
+  }
+
+  if (query === '') { 
+    searchMessageDiv.innerHTML = '';
+    cardsContainer.innerHTML = '';
+    return;
+  }
+
   try {
-    const query = searchInput.value.trim();
+    // Only show loading message after 300ms
+    loadingTimeoutId = setTimeout(() => {
+      searchMessageDiv.innerHTML = `
+        <p class="animate-pulse">Loading...</p>
+      `;
+    }, 500);
+
     const response = await fetch(`/api/search/?q=${encodeURIComponent(query)}`);
     const data = await response.json();
+
+    clearTimeout(loadingTimeoutId);
+    loadingTimeoutId = null;
+    searchMessageDiv.innerHTML = '';
+
+    if (!data.success) throw new Error(data.message);
+
+    if (data.results.length === 0) {
+      cardsContainer.innerHTML = '';
+      searchMessageDiv.innerHTML = `
+        <p>No results found.</p>
+      `;
+      return;
+    }
+
+    // There are results
+    searchMessageDiv.innerHTML = '';
     cardsContainer.innerHTML = '';
 
-    if (data.success) {
-      data.results.forEach(result => {
+    data.results.forEach(result => {
 
-        const card = createCard(
-          result,
-          result.vocab,
-          result.ani,
-          { handleAddToMyCards: loggedIn ? addHandler : null }
-        );
-        card.appendChild(createElement('p', `Posted by ${result.creator.username}`));
-        cardsContainer.appendChild(card);
-      });
-    } else {
-      throw new Error(result.message);
-    }
+      const card = createCard(
+        result,
+        result.vocab,
+        result.ani,
+        { handleAddToMyCards: loggedIn ? addHandler : null }
+      );
+
+      card.appendChild(
+        createElement("p", `Posted by ${result.creator.username}`, {
+          class: "text-xs text-slate-500 italic"
+        })
+      );
+      cardsContainer.appendChild(card);
+    });
+    
   } catch (err) {
     console.error(err);
-    alert(`Failed to perform search: ${err.message}`);
+    if (loadingTimeoutId !== null) {
+      clearTimeout(loadingTimeoutId);
+      loadingTimeoutId = null;
+    }
+    searchMessageDiv.innerHTML = '';
+    showToast(`Search failed: ${err.message}`, "error");
   }
 }
 
@@ -40,12 +86,10 @@ searchForm.addEventListener('submit', (evt) => {
   search();
 })
 
-// Initial load
-search();
 
 async function addHandler(screenshot, cardDiv, addBtn) {
-  // TODO: create new duplicate screenshot and a new UserCard to go along with it
-  if (!confirm("Add this card to your deck?")) return;
+  const ok = await showConfirm("Add this card to your deck?");
+  if (!ok) return;
 
   addBtn.disabled = true;
 
@@ -54,13 +98,13 @@ async function addHandler(screenshot, cardDiv, addBtn) {
     const result = await response.json();
     if (result.success) {
       addBtn.textContent = "Added!";
-      alert("Added to your deck!");
+      showToast("Added to your deck!", "success");
     } else {
       throw new Error(result.message);
     }
   } catch (err) {
     console.error(err);
-    alert(`Failed to add card to your deck: ${err.message}`);
+    showToast(`Failed to add card: ${err.message}`, "error");
 
     addBtn.disabled = false;
   }

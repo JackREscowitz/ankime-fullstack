@@ -1,4 +1,4 @@
-// src/public/js/pages/login.js
+// src/public/js/pages/register.js
 
 import { createElement } from "../main.js";
 
@@ -24,12 +24,16 @@ registerForm.addEventListener('submit', async (evt) => {
     if (result.success) {
       window.location.replace('/');
     } else {
-      const errorMessage = createElement('p', result.message);
+      const errorMessage = createElement('p', result.message, {
+        class: "text-sm text-rose-600 font-medium mt-2"
+      });
       errorDiv.appendChild(errorMessage);
     }
   } catch (err) {
     console.error(err);
-    const errorMessage = createElement('p', "Registering failed. Try again.");
+    const errorMessage = createElement('p', result.message, {
+      class: "text-sm text-rose-600 font-medium mt-2"
+    });
     errorDiv.appendChild(errorMessage);
   }
 });

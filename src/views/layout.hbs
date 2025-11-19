@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <meta charset="utf-8">
     <title>Ankime</title>
+    <link rel="stylesheet" href="/css/main.css">
   </head>
-  <body data-logged-in="{{#if user}}true{{else}}false{{/if}}">
-    <nav>
-      <ul>
-        <li class="logo"><a href="/">Ankime</a></li>
-        <li><a href="/about">About</a></li>
-        {{#if user}}
-        <li><a href="/my-cards">My Cards</a></li>
-        <li><a href="/user/logout">Logout</a></li>
-        {{else}}
-        <li><a href="/user/register">Register</a></li>
-        <li><a href="/user/login">Login</a></li>
-        {{/if}}
+  <body class="bg-slate-50 text-slate-800 min-h-screen" data-logged-in="{{#if user}}true{{else}}false{{/if}}">
+    <nav class="bg-white/80 backdrop-blur shadow-md rounded-b-xl">
+      <ul class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between gap-6 text-slate-700 font-medium">
+
+        <li class="text-xl font-bold tracking-tight text-indigo-600">
+          <a href="/">Ankime</a>
+        </li>
+
+        <li class="flex items-center gap-6">
+          <a class="hover:text-indigo-600 transition" href="/about">About</a>
+
+          {{#if user}}
+            <a class="hover:text-indigo-600 transition" href="/my-cards">My Cards</a>
+            <a class="hover:text-indigo-600 transition" href="/user/logout">Logout</a>
+          {{else}}
+            <a class="hover:text-indigo-600 transition" href="/user/register">Register</a>
+            <a class="hover:text-indigo-600 transition" href="/user/login">Login</a>
+          {{/if}}
+        </li>
+
       </ul>
     </nav>
-    {{{body}}}
+
+    <div class="max-w-5xl mx-auto px-4 py-6">
+      {{{body}}}
+    </div>
     <script type="module" src="/js/main.js"></script>
   </body>
 </html>

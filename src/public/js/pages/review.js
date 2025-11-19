@@ -21,20 +21,30 @@ function showNextCard() {
 
   const card = cards[0];
   reviewContainer.innerHTML = '';
-  // TODO: css additions
-  const cardDiv = createElement('div');
+
+  const cardDiv = createElement('div', null, {
+    class: "bg-white rounded-xl shadow-lg p-6 space-y-4 max-w-xl mx-auto"
+  });
+
 
   // Front of card
   const { translation, ...screenshotWithoutTranslation } = card.screenshot;
   const screenshotDiv = createScreenshot(screenshotWithoutTranslation, card.ani);
   cardDiv.appendChild(screenshotDiv);
 
-  const revealBtn = createElement('button', "Reveal");
+  const revealBtn = createElement('button', "Reveal", {
+    class: "w-full px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition"
+  });
+
   cardDiv.appendChild(revealBtn);
 
   // Back of card
-  const backDiv = createElement('div', null, { style: "display: none" });
-  const translationParagraph = createElement('p', `Translation: ${card.screenshot.translation}`);
+  const backDiv = createElement('div', null, {
+    class: "space-y-4"
+  });
+  const translationParagraph = createElement('p', `Translation: ${card.screenshot.translation}`, {
+    class: "text-slate-700"
+  });
   backDiv.appendChild(translationParagraph);
 
   card.vocab.forEach(entry => {
@@ -45,7 +55,10 @@ function showNextCard() {
   const ratings = ["Again", "Hard", "Good", "Easy"];
 
   for (let i = 0; i < 4; i++) {
-    const ratingBtn = createElement('button', ratings[i], { "data-rating": i });
+    const ratingBtn = createElement('button', ratings[i], {
+      "data-rating": i,
+      class: "px-4 py-2 rounded-lg font-medium shadow border border-slate-200 hover:bg-slate-100 transition"
+    });
     backDiv.appendChild(ratingBtn);
   }
 

@@ -29,6 +29,7 @@ import { connectDB } from './models/db.mjs';
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const publicPath = path.resolve(__dirname, 'public');
 
 // Add session support (req.session)
 const sessionOptions = {
@@ -47,7 +48,8 @@ app.use((req, res, next) => {
   next();
 })
 
-app.use(express.static(path.resolve(__dirname, 'public')));
+app.use(express.static(publicPath));
+console.log("Serving public assets from", publicPath);
 
 // Body parsers
 app.use(express.urlencoded({ extended: false }));

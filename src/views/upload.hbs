@@ -1,26 +1,34 @@
-<h1>Upload Screenshot</h1>
-<div id="upload-screenshot-form-container">
+<h1 class="text-3xl font-bold mb-6">Upload Screenshot</h1>
+<div id="upload-screenshot-form-container" class="bg-white rounded-xl shadow-lg p-6 space-y-4 max-w-xl mx-auto">
   <form id="upload-screenshot-form" action="/api/screenshots" enctype="multipart/form-data" method="post">
-    <input id="title-search" type="text" placeholder="Anime/Manga Title" required>
-    <div id="title-results" class="dropdown"></div>
-    <input id="anilist-id" type="hidden" name="anilist_id">
-    <textarea name="sentence" placeholder="Sentence" required></textarea>
-    <input type="text" name="translation" placeholder="Sentence Translation (Optional)">
-    <input type="file" name="image" accept="image/*" required>
+    <input id="title-search" type="text" placeholder="Anime/Manga Title"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" required>
+    <div id="title-results" class="absolute mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto w-full z-50"></div>
+    <input id="anilist-id" type="hidden" name="anilist_id"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
+    <textarea name="sentence" placeholder="Sentence" 
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400 h-24" required></textarea>
+    <input type="text" name="translation" placeholder="Sentence Translation (Optional)"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
+    <input type="file" name="image" accept="image/*" class="w-full mt-2 text-slate-700" required>
 
-    <button type="submit">Save</button>
+    <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">Save</button>
   </form>
 </div>
 
 <div id="upload-result"></div>
 
 <div id="upload-vocab-form-container" style="display: none">
-  <h2>Add Vocab Entry</h2>
-  <form id="upload-vocab-form" action="/api/vocab" enctype="multipart/form-data" method="post">
-    <input type="text" name="word" placeholder="Word" required>
-    <input type="text" name="reading" placeholder="Reading (Optional)">
-    <input type="text" name="meaning" placeholder="Meaning" required>
-    <select name="partOfSpeech" required>
+  <h2 class="text-2xl font-semibold mb-4">Add Vocab Entry</h2>
+  <form id="upload-vocab-form" action="/api/vocab" enctype="multipart/form-data" method="post" class="space-y-4">
+    <input type="text" name="word" placeholder="Word"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" required>
+    <input type="text" name="reading" placeholder="Reading (Optional)"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
+    <input type="text" name="meaning" placeholder="Meaning"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" required>
+    <select name="partOfSpeech"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 bg-white shadow-sm focus:ring-2 focus:ring-indigo-400" required>
       <option value="noun">Noun/名詞</option>
       <option value="verb">Verb/動詞</option>
       <option value="i-adjective">i-Adjective/形容詞</option>
@@ -36,12 +44,16 @@
       <option value="suffix">Suffix/接尾辞</option>
       <option value="other">Other/その他</option>
     </select>
-    <textarea name="notes" placeholder="Notes"></textarea>
+    <textarea name="notes" placeholder="Notes"
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400 h-24"></textarea>
 
-    <button type="submit">Add</button>
+    <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">Add</button>
   </form>
 
-  <a href="/my-cards/upload">Upload Another Screenshot</a>
+  <a href="/my-cards/upload" 
+    class="inline-block mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition">
+    Upload Another Screenshot
+  </a>
 </div>
 
 <script type="module" src="/js/pages/upload.js"></script>

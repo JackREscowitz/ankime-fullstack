@@ -24,12 +24,16 @@ loginForm.addEventListener('submit', async (evt) => {
     if (result.success) {
       window.location.replace('/');
     } else {
-      const errorMessage = createElement('p', result.message);
+      const errorMessage = createElement('p', result.message, {
+        class: "text-sm text-rose-600 font-medium mt-2"
+      });
       errorDiv.appendChild(errorMessage);
     }
   } catch (err) {
     console.error(err);
-    const errorMessage = createElement('p', "Login failed. Try again.");
+    const errorMessage = createElement('p', "Login failed. Try again.", {
+      class: "text-sm text-rose-600 font-medium mt-2"
+    });
     errorDiv.appendChild(errorMessage);
   }
 });

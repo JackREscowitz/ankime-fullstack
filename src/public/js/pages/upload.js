@@ -42,19 +42,19 @@ titleSearch.addEventListener('input', () => {
       titleResultsDropdown.innerHTML = '';
       
       results.forEach(item => {
-      const div = createElement(
-        'div', 
-        `${item.title.trim()} ${item.native_title.trim() || ''} (${item.type === "ANIME" ? "Anime" : "Manga"})`,
-        {} // TODO: css additions
-      );
-      // User selects a title from dropdown
-      div.addEventListener('click', () => {
-        titleSearch.value = item.title;
-        hiddenAnilistId.value = item.anilist_id;
-        titleResultsDropdown.innerHTML = '';
+        const text = `${item.title.trim()} ${item.native_title.trim() || ''} (${item.type === "ANIME" ? "Anime" : "Manga"})`;
+        const div = createElement('div', text, {
+          class: "px-3 py-2 hover:bg-slate-100 cursor-pointer text-slate-800"
+        });
+
+        // User selects a title from dropdown
+        div.addEventListener('click', () => {
+          titleSearch.value = item.title;
+          hiddenAnilistId.value = item.anilist_id;
+          titleResultsDropdown.innerHTML = '';
+        });
+        titleResultsDropdown.appendChild(div);
       });
-      titleResultsDropdown.appendChild(div);
-    });
     } catch (err) {
       console.error(err);
       return null;
@@ -118,7 +118,6 @@ uploadVocabForm.addEventListener('submit', async (evt) => {
       body: formData
     });
     const result = await response.json();
-    // TODO: Preferred not to have alerts in final version
     if (result.success) {
       const vocabContainer = createVocabItem(result.vocab, POS_LABELS, handleVocabDelete);
       uploadResult.appendChild(vocabContainer);
@@ -128,12 +127,13 @@ uploadVocabForm.addEventListener('submit', async (evt) => {
     }
   } catch (err) {
     console.error(err);
-    alert(`Failed to add vocabulary: ${err.message}`);
+    showToast(`Failed to add vocab: ${err.message}`, "error");
   }
 });
 
 async function handleScreenshotDelete(screenshot, container, deleteBtn) {
-  if (!confirm("Delete this screenshot and all associated vocabulary entries?")) return;
+  const ok = await showConfirm("Delete screenshot and all vocabulary?");
+  if (!ok) return;
 
   deleteBtn.disabled = true;
 
@@ -152,13 +152,14 @@ async function handleScreenshotDelete(screenshot, container, deleteBtn) {
     }
   } catch (err) {
     console.error(err);
-    alert(`Failed to delete screenshot: ${err.message}`);
+    showToast(`Delete failed: ${err.message}`, "error");
     deleteBtn.disabled = false;
   }
 }
 
 async function handleVocabDelete(vocab, container, deleteBtn) {
-  if (!confirm("Delete this vocab entry?")) return;
+  const ok = await showConfirm("Delete this vocab entry?");
+  if (!ok) return;
 
   deleteBtn.disabled = true;
 
@@ -173,7 +174,7 @@ async function handleVocabDelete(vocab, container, deleteBtn) {
     }
   } catch (err) {
     console.error(err);
-    alert(`Failed to delete vocabulary entry: ${err.message}`);
+    showToast(`Delete failed: ${err.message}`, "error");
     deleteBtn.disabled = false;
   }
 }

@@ -1,6 +1,6 @@
 // src/public/js/pages/myCards.js
 
-import { createCard } from '../main.js';
+import { createCard, showConfirm, showToast } from '../main.js';
 
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
@@ -23,7 +23,7 @@ async function search() {
     }
   } catch (err) {
     console.error(err);
-    alert(`Failed to perform search: ${err.message}`);
+    showToast(`Search failed: ${err.message}`, "error");
   }
 }
 
@@ -36,7 +36,8 @@ searchForm.addEventListener('submit', (evt) => {
 search();
 
 async function handleDelete(screenshot, cardDiv, deleteBtn) {
-  if (!confirm("Are you sure you want to delete this card? This action cannot be undone.")) return;
+  const ok = await showConfirm("Delete this card? This cannot be undone.");
+  if (!ok) return;
 
   deleteBtn.disabled = true;
 
@@ -50,13 +51,20 @@ async function handleDelete(screenshot, cardDiv, deleteBtn) {
     }
   } catch (err) {
     console.error(err);
-    alert(`Failed to delete card: ${err.message}`);
+    showToast(`Delete failed: ${err.message}`, "error");
     deleteBtn.disabled = false;
   }
 }
 
 // TODO: cardDiv argument for potential css changes
 async function handlePublicToggle(screenshot, cardDiv, publicToggleBtn) {
+  if (screenshot.public) {
+    const ok = await showConfirm("Remove this card from the public collection?");
+    if (!ok) return;
+  } else {
+    const ok = await showConfirm("Make this card public? Users will be able to save their own copy to their decks.");
+  }
+
   const newPublicState = !screenshot.public;
 
   screenshot.public = newPublicState;
@@ -79,7 +87,7 @@ async function handlePublicToggle(screenshot, cardDiv, publicToggleBtn) {
     // Reverse updates in case of error
     screenshot.public = !newPublicState;
     publicToggleBtn.textContent = screenshot.public ? "Remove from Public" : "Make Public";
-    alert(`Failed to update public status: ${err.message}`);
+    showToast(`Failed to update public status: ${err.message}`, "error");
   } finally {
     publicToggleBtn.disabled = false;
   }
