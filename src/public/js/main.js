@@ -39,8 +39,13 @@ export function createCard(screenshot, vocabEntries, ani, btnFunctions) {
   btnFunctions = btnFunctions || {};
 
   const cardDiv = createElement('div', null, {
-    class: "fade-in bg-white rounded-xl shadow-lg p-4 space-y-4 hover:shadow-xl hover:-translate-y-1 transition"
+    class: `
+      fade-in bg-white rounded-xl shadow-lg 
+      p-6 space-y-4 
+      max-w-2xl w-full
+    `
   });
+
   const screenshotDiv = createScreenshot(screenshot, ani, null);
   const buttonRow = createElement('div', null, {
     class: "flex flex-wrap gap-2"
@@ -48,10 +53,15 @@ export function createCard(screenshot, vocabEntries, ani, btnFunctions) {
 
   cardDiv.appendChild(screenshotDiv);
 
+  // Scrollable vocab entry container
+  const vocabScroll = createElement('div', null, {
+    class: "max-h-64 overflow-y-auto space-y-3 pr-1"
+  })
+
   vocabEntries.forEach(entry => {
-    const vocabDiv = createVocabItem(entry, POS_LABELS, null);
-    cardDiv.appendChild(vocabDiv);
+    vocabScroll.appendChild(createVocabItem(entry, POS_LABELS, null));
   });
+  cardDiv.appendChild(vocabScroll);
 
   cardDiv.appendChild(buttonRow);
   
@@ -73,7 +83,7 @@ export function createCard(screenshot, vocabEntries, ani, btnFunctions) {
   }
 
   if (btnFunctions.handlePublicToggle) {
-    const publicToggleBtn = createElement('button', `${screenshot.public ? "Remove from Public" : "Make Public"}`, {
+    const publicToggleBtn = createElement('button', `${screenshot.public ? "Make Private" : "Make Public"}`, {
       class: "px-3 py-2 bg-slate-200 text-slate-800 rounded-xl hover:bg-slate-300 transition"
     });
     publicToggleBtn.addEventListener('click', () => 
@@ -109,15 +119,15 @@ export function createScreenshot(screenshot, ani, onDelete) {
     container.appendChild(newTranslationParagraph);
   }
 
-  const newImage = createElement('img', null, {
+  const newImage = createElement("img", null, {
     src: screenshot.imageUrl,
-    class: "rounded-lg shadow max-w-full"
+    class: "rounded-lg shadow mx-auto"
   });
   container.appendChild(newImage);
 
   if (onDelete) {
     const deleteBtn = createElement('button', 'Delete Screenshot', {
-      class: "px-3 py-1 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition"
+      class: "px-3 py-2 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition"
     });
     deleteBtn.addEventListener('click', () => onDelete(screenshot, container, deleteBtn));
     container.appendChild(deleteBtn);
@@ -129,7 +139,7 @@ export function createScreenshot(screenshot, ani, onDelete) {
 // onDelete(vocab, container)
 export function createVocabItem(vocab, POS_LABELS, onDelete) {
   const container = createElement('div', null, {
-    class: "bg-slate-50 border border-slate-200 rounded-lg p-3 space-y-1"
+    class: "w-full bg-white border border-slate-200 rounded-lg p-3 space-y-1"
   });
 
   const fields = [
@@ -149,7 +159,7 @@ export function createVocabItem(vocab, POS_LABELS, onDelete) {
 
   if (onDelete) {
     const deleteBtn = createElement('button', 'Delete Vocab Entry', {
-      class: "px-2 py-1 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition"
+      class: "px-3 py-2 bg-rose-500 text-white rounded-xl hover:bg-rose-600 transition"
     });
     deleteBtn.addEventListener('click', () => onDelete(vocab, container, deleteBtn));
     container.appendChild(deleteBtn);

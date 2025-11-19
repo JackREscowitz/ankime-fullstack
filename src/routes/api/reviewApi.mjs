@@ -100,4 +100,20 @@ router.get('/due', ensureAuthnApi, async (req, res, next) => {
   }
 });
 
+router.get('/due/count', ensureAuthnApi, async (req, res, next) => {
+  try {
+    const now = new Date();
+    
+    const count = await UserCard.countDocuments({
+      user: req.user._id,
+      isInReview: true,
+      nextReview: { $lte: now }
+    });
+
+    res.json({ success: true, count });
+  } catch (err) {
+    next(err);
+  }
+});
+
 export default router;

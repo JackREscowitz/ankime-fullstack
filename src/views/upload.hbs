@@ -1,25 +1,44 @@
-<h1 class="text-3xl font-bold mb-6">Upload Screenshot</h1>
-<div id="upload-screenshot-form-container" class="bg-white rounded-xl shadow-lg p-6 space-y-4 max-w-xl mx-auto">
-  <form id="upload-screenshot-form" action="/api/screenshots" enctype="multipart/form-data" method="post">
-    <input id="title-search" type="text" placeholder="Anime/Manga Title"
-      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" required>
-    <div id="title-results" class="absolute mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto w-full z-50"></div>
+<h1 class="text-3xl font-bold mb-6 text-center">Upload Screenshot</h1>
+<div id="upload-screenshot-form-container"
+  class="bg-white rounded-xl shadow-lg p-6 space-y-4 max-w-xl mx-auto mt-6">
+  <form id="upload-screenshot-form" action="/api/screenshots" enctype="multipart/form-data" method="post"
+    class="space-y-4">
+    <div class="relative">
+
+      <input id="title-search" type="text" placeholder="Anime/Manga Title"
+        class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" required>
+
+      <div id="title-results" 
+        class="absolute left-0 right-0 mt-1 bg-white rounded-xl max-h-60 overflow-y-auto z-50 hidden"></div>
+    
+    </div>
+    
     <input id="anilist-id" type="hidden" name="anilist_id"
       class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
+    
     <textarea name="sentence" placeholder="Sentence" 
-      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400 h-24" required></textarea>
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400 h-24 mb-1" required></textarea>
+    
     <input type="text" name="translation" placeholder="Sentence Translation (Optional)"
-      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
-    <input type="file" name="image" accept="image/*" class="w-full mt-2 text-slate-700" required>
+      class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400 mb-1">
+    
+    <label class="block">
+      <span class="text-slate-700">Image Upload:</span>
+      <input type="file" name="image" accept="image/*"
+        class="mt-1 w-full block text-slate-700 file:mr-4 file:py-2 file:px-4 
+              file:rounded-lg file:border-0 file:text-white 
+              file:bg-indigo-600 hover:file:bg-indigo-700 transition" required>
+    </label>
 
-    <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">Save</button>
+    <button type="submit" class="px-4 py-2 rounded-lg shadow bg-indigo-600 text-white hover:bg-indigo-700 transition"
+      >Save</button>
   </form>
 </div>
 
 <div id="upload-result"></div>
 
-<div id="upload-vocab-form-container" style="display: none">
-  <h2 class="text-2xl font-semibold mb-4">Add Vocab Entry</h2>
+<div id="upload-vocab-form-container" class="mt-12" style="display: none">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Add Vocab Entry</h2>
   <form id="upload-vocab-form" action="/api/vocab" enctype="multipart/form-data" method="post" class="space-y-4">
     <input type="text" name="word" placeholder="Word"
       class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400" required>
@@ -47,11 +66,12 @@
     <textarea name="notes" placeholder="Notes"
       class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400 h-24"></textarea>
 
-    <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">Add</button>
+    <button type="submit" class="px-4 py-2 rounded-lg shadow bg-indigo-600 text-white hover:bg-indigo-700 transition">
+      Add</button>
   </form>
 
   <a href="/my-cards/upload" 
-    class="inline-block mt-4 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition">
+    class="mt-6 inline-block px-4 py-2 rounded-lg shadow bg-slate-200 text-slate-800 hover:bg-slate-300 transition">
     Upload Another Screenshot
   </a>
 </div>

@@ -164,8 +164,6 @@ Home
 
 ## [Link to Initial Main Project File](src/app.mjs)
 
----
-
 ## Annotations / References Used
 
 1. Express documentation — server setup reference  

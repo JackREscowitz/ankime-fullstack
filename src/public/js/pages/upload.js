@@ -1,6 +1,6 @@
 // src/public/js/pages/upload.js
 
-import { createElement, createScreenshot, createVocabItem, POS_LABELS } from '../main.js';
+import { createElement, createScreenshot, createVocabItem, POS_LABELS, showToast, showConfirm } from '../main.js';
 
 const uploadScreenshotFormContainer = document.getElementById('upload-screenshot-form-container');
 const uploadScreenshotForm = document.getElementById('upload-screenshot-form');
@@ -13,10 +13,13 @@ const hiddenAnilistId = document.getElementById('anilist-id');
 
 let timeout = null;
 let controller = null;
+let currentWrapper = null;
 
 titleSearch.addEventListener('input', () => {
   const query = titleSearch.value.trim();
   titleResultsDropdown.innerHTML = '';
+  titleResultsDropdown.classList.add("hidden");
+  titleResultsDropdown.classList.remove("border", "border-slate-200", "shadow-lg");
   hiddenAnilistId.value = '';
   
   // Only fetch when the user pauses typing for 250ms
@@ -35,11 +38,19 @@ titleSearch.addEventListener('input', () => {
       });
       const data = await response.json();
 
-      if (!data.success) {
-        throw new Error(data.message || "Search failed.");
-      }
+      if (!data.success) throw new Error(data.message || "Search failed.");
+
       const results = data.results;
       titleResultsDropdown.innerHTML = '';
+
+      if (!results.length) {
+        titleResultsDropdown.classList.add("hidden");
+        titleResultsDropdown.classList.remove("border", "border-slate-200", "shadow-lg");
+        return;
+      }
+
+      titleResultsDropdown.classList.remove("hidden");
+      titleResultsDropdown.classList.add("border", "border-slate-200", "shadow-lg");
       
       results.forEach(item => {
         const text = `${item.title.trim()} ${item.native_title.trim() || ''} (${item.type === "ANIME" ? "Anime" : "Manga"})`;
@@ -52,11 +63,16 @@ titleSearch.addEventListener('input', () => {
           titleSearch.value = item.title;
           hiddenAnilistId.value = item.anilist_id;
           titleResultsDropdown.innerHTML = '';
+          titleResultsDropdown.classList.add("hidden");
+          titleResultsDropdown.classList.remove("border", "border-slate-200", "shadow-lg");
         });
+
         titleResultsDropdown.appendChild(div);
       });
     } catch (err) {
       console.error(err);
+      titleResultsDropdown.classList.add("hidden");
+      titleResultsDropdown.classList.remove("border", "border-slate-200", "shadow-lg");
       return null;
     }
   }, 250);
@@ -88,8 +104,14 @@ uploadScreenshotForm.addEventListener('submit', async (evt) => {
       const screenshot = result.screenshot;
       const ani = screenshot.ani;
 
+      const wrapper = createElement('div', null, {
+        class: "bg-white rounded-xl shadow-lg p-6 space-y-4 max-w-xl mx-auto mt-6"
+      });
+      currentWrapper = wrapper;
+
       const screenshotContainer = createScreenshot(screenshot, ani, handleScreenshotDelete);
-      uploadResult.appendChild(screenshotContainer);
+      wrapper.appendChild(screenshotContainer);
+      uploadResult.appendChild(wrapper);
 
       // Store screenshot ID for later vocab linking
       uploadVocabForm.dataset.screenshotId = screenshot._id;
@@ -119,8 +141,19 @@ uploadVocabForm.addEventListener('submit', async (evt) => {
     });
     const result = await response.json();
     if (result.success) {
+
+      let vocabScroll = document.getElementById('upload-vocab-scroll');
+      if (!vocabScroll) {
+        vocabScroll = createElement('div', null, {
+          id: "upload-vocab-scroll",
+          class: "max-h-64 overflow-y-auto space-y-3 px-4 py-4 mt-4 bg-slate-50 rounded-xl shadow-inner"
+        });
+
+        currentWrapper.appendChild(vocabScroll);
+      }
+
       const vocabContainer = createVocabItem(result.vocab, POS_LABELS, handleVocabDelete);
-      uploadResult.appendChild(vocabContainer);
+      vocabScroll.appendChild(vocabContainer);
       uploadVocabForm.reset();
     } else {
       throw new Error(result.message);
@@ -169,6 +202,13 @@ async function handleVocabDelete(vocab, container, deleteBtn) {
     const result = await response.json();
     if (result.success) {
       container.remove();
+
+      // Remove scroll container if empty
+      const vocabScroll = document.getElementById("upload-vocab-scroll");
+      if (vocabScroll && vocabScroll.children.length === 0) {
+        vocabScroll.remove();
+      }
+
     } else {
       throw new Error(result.message);
     }

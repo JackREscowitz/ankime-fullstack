@@ -6,6 +6,7 @@ const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const cardsContainer = document.getElementById('cards-container');
 const searchMessageDiv = document.getElementById('search-message');
+const dueCountSpan = document.getElementById('due-count');
 
 let loadingTimeoutId = null;
 
@@ -62,8 +63,6 @@ searchForm.addEventListener('submit', (evt) => {
   search();
 })
 
-search();
-
 async function handleDelete(screenshot, cardDiv, deleteBtn) {
   const ok = await showConfirm("Delete this card? This cannot be undone.");
   if (!ok) return;
@@ -98,7 +97,7 @@ async function handlePublicToggle(screenshot, cardDiv, publicToggleBtn) {
   const newPublicState = !screenshot.public;
 
   screenshot.public = newPublicState;
-  publicToggleBtn.textContent = newPublicState ? "Remove from Public" : "Make Public";
+  publicToggleBtn.textContent = newPublicState ? "Make Private" : "Make Public";
 
   publicToggleBtn.disabled = true;
 
@@ -116,9 +115,35 @@ async function handlePublicToggle(screenshot, cardDiv, publicToggleBtn) {
     console.error(err);
     // Reverse updates in case of error
     screenshot.public = !newPublicState;
-    publicToggleBtn.textContent = screenshot.public ? "Remove from Public" : "Make Public";
+    publicToggleBtn.textContent = screenshot.public ? "Meke Private" : "Make Public";
     showToast(`Failed to update public status: ${err.message}`, "error");
   } finally {
     publicToggleBtn.disabled = false;
   }
 }
+
+async function loadDueCount() {
+  if (!dueCountSpan) return;
+
+  try {
+    const response = await fetch('/api/review/due/count');
+    const result = await response.json();
+    if (!result.success) throw new Error(result.message);
+
+    const count = result.count || 0;
+
+    if (count === 0) {
+      dueCountSpan.textContent = "No cards";
+    } else if (count === 1) {
+      dueCountSpan.textContent = "1 card";
+    } else {
+      dueCountSpan.textContent = `${count} cards`;
+    }
+  } catch (err) {
+    console.error(err);
+    dueCountSpan.textContent = "—";
+  }
+}
+
+search();
+loadDueCount();
