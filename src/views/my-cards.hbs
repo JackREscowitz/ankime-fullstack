@@ -1,18 +1,23 @@
-<a href="/my-cards/review"
-   class="inline-block mb-4 px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition">
-  Start Review
-</a>
+<div class="flex flex-wrap items-center gap-3 mb-4">
+  <a href="/my-cards/review"
+    class="px-4 py-2 bg-indigo-600 text-white rounded-lg shadow hover:bg-indigo-700 transition">
+    Start Review
+  </a>
+
+  <a href="/my-cards/upload"
+    class="px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition">
+    Upload Screenshot
+  </a>
+</div>
 
 <form id="search-form" class="flex gap-2 mt-6">
   <input id="search-input" type="text" name="q" placeholder="Search by title or vocabulary..."
     class="w-full rounded-lg border border-slate-300 px-3 py-2 shadow-sm focus:ring-2 focus:ring-indigo-400">
-  <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">Search</button>
+  <button type="submit" class="px-3 py-2 bg-indigo-600 text-white rounded-xl shadow hover:bg-indigo-700 transition">
+    Search</button>
 </form>
 
-<a href="/my-cards/upload"
-   class="inline-block mb-4 px-4 py-2 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition ml-2">
-  Upload Screenshot
-</a>
+<div id="search-message" class="mt-4 min-h-6 text-center text-slate-500"></div>
 
 <div id="cards-container" class="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 

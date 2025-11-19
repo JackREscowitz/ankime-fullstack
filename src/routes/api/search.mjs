@@ -157,9 +157,9 @@ router.get('/my-cards', ensureAuthnApi, async (req, res, next) => {
 
     pipeline.push({ $sort: { createdAt: -1 } });
 
-    // If no search query, limit to 5 newest cards
+    // If no search query, limit to 6 newest cards
     if (!q) {
-      pipeline.push({ $limit: 5 });
+      pipeline.push({ $limit: 6 });
     }
 
     const results = await UserCard.aggregate(pipeline);

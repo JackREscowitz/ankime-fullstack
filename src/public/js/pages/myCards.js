@@ -5,24 +5,54 @@ import { createCard, showConfirm, showToast } from '../main.js';
 const searchForm = document.getElementById('search-form');
 const searchInput = document.getElementById('search-input');
 const cardsContainer = document.getElementById('cards-container');
+const searchMessageDiv = document.getElementById('search-message');
+
+let loadingTimeoutId = null;
 
 async function search() {
+  const query = searchInput.value.trim();
+
+  if (loadingTimeoutId !== null) {
+    clearTimeout(loadingTimeoutId);
+    loadingTimeoutId = null;
+  }
+
   try {
-    const query = searchInput.value.trim();
+    loadingTimeoutId = setTimeout(() => {
+      searchMessageDiv.innerHTML = `
+        <p class="animate-pulse">Loading...</p>
+      `;
+    }, 500);
+
     const response = await fetch(`/api/search/my-cards?q=${encodeURIComponent(query)}`);
     const data = await response.json();
-    cardsContainer.innerHTML = '';
+    
+    clearTimeout(loadingTimeoutId);
+    loadingTimeoutId = null;
+    searchMessageDiv.innerHTML = '';
 
-    if (data.success) {
-      data.results.forEach(result => {
-        const card = createCard(result.shot, result.vocab, result.ani, { handleDelete, handlePublicToggle });
-        cardsContainer.appendChild(card);
-      });
-    } else {
-      throw new Error(data.message);
+    if (!data.success) throw new Error(data.message);
+
+    if (data.results.length === 0) {
+      cardsContainer.innerHTML = '';
+      searchMessageDiv.innerHTML = `<p>No cards found.<p>`;
+      return;
     }
+
+    cardsContainer.innerHTML = '';
+    data.results.forEach(result => {
+      const card = createCard(result.shot, result.vocab, result.ani, { handleDelete, handlePublicToggle });
+      cardsContainer.appendChild(card);
+    });
+
   } catch (err) {
     console.error(err);
+    if (loadingTimeoutId !== null) {
+      clearTimeout(loadingTimeoutId);
+      loadingTimeoutId = null;
+    }
+
+    searchMessageDiv.innerHTML = "";
     showToast(`Search failed: ${err.message}`, "error");
   }
 }
@@ -32,7 +62,6 @@ searchForm.addEventListener('submit', (evt) => {
   search();
 })
 
-// Initial load
 search();
 
 async function handleDelete(screenshot, cardDiv, deleteBtn) {
@@ -58,12 +87,13 @@ async function handleDelete(screenshot, cardDiv, deleteBtn) {
 
 // TODO: cardDiv argument for potential css changes
 async function handlePublicToggle(screenshot, cardDiv, publicToggleBtn) {
+  let ok;
   if (screenshot.public) {
-    const ok = await showConfirm("Remove this card from the public collection?");
-    if (!ok) return;
+    ok = await showConfirm("Remove this card from the public collection?");
   } else {
-    const ok = await showConfirm("Make this card public? Users will be able to save their own copy to their decks.");
+    ok = await showConfirm("Make this card public? Users will be able to save their own copy to their decks.");
   }
+  if (!ok) return;
 
   const newPublicState = !screenshot.public;
 
