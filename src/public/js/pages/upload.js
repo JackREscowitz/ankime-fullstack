@@ -84,7 +84,9 @@ uploadScreenshotForm.addEventListener('submit', async (evt) => {
   if (!hiddenAnilistId.value) {
     uploadResult.innerHTML = '';
     uploadResult.appendChild(
-      createElement('p', "Please select a title from the dropdown.")
+      createElement('p', "Please select a title from the dropdown.", {
+        class: "mt-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2" 
+      })
     );
     return;
   }
@@ -120,12 +122,16 @@ uploadScreenshotForm.addEventListener('submit', async (evt) => {
       uploadScreenshotFormContainer.style.display = 'none';
 
     } else {
-      const errorParagraph = createElement('p', result.message);
+      const errorParagraph = createElement('p', result.message, {
+        class: "mt-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+      });
       uploadResult.appendChild(errorParagraph);
     }
   } catch (err) {
     console.error(err);
-    const errorParagraph = createElement('p', "Upload failed. Try again.");
+    const errorParagraph = createElement('p', "Upload failed. Try again.", {
+      class: "mt-4 text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2"
+    });
     uploadResult.appendChild(errorParagraph);
   }
 });

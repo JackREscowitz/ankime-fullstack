@@ -95,9 +95,9 @@ The application uses five collections:
 ```
 ---
 
-## [Link to Models Directory](models/)
+## [Link to Models Directory](src/models/)
 
-Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and commented in `models/db.mjs`. The `AniTitle` Schema is in `models/aniTitle.mjs`.
+Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and commented in `src/models/db.mjs`. The `AniTitle` Schema is in `src/models/aniTitle.mjs`.
 
 ## Wireframes
 
