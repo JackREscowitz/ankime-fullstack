@@ -179,7 +179,7 @@ router.post('/clone/:id', ensureAuthnApi, async (req, res, next) => {
         word: v.word,
         reading: v.reading,
         meaning: v.meaning,
-        type: v.type,
+        partOfSpeech: v.partOfSpeech,
         screenshot: cloneScreenshot._id,
         user: req.user._id
       }));
