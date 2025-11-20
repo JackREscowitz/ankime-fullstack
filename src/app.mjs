@@ -24,6 +24,7 @@ import searchRoutes from './routes/api/search.mjs';
 import reviewRoutes from './routes/api/reviewApi.mjs';
 
 import { notFound, errorHandler } from './middleware/errors.mjs';
+import { apiLimiter } from './middleware/rateLimit.mjs';
 import { connectDB } from './models/db.mjs';
 
 const app = express();
@@ -63,6 +64,8 @@ app.set('views', path.resolve(__dirname, 'views'));
 app.use(rootRoutes);
 app.use('/user', userPageRoutes);
 app.use('/my-cards', myCardsRoutes);
+
+app.use('/api', apiLimiter);
 
 // API routes
 app.use('/api/users', userApiRoutes);

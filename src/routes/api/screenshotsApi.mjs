@@ -1,136 +1,12 @@
 // src/routes/api/screenshotsApi.mjs
 
-/**
- * /screenshots routes
- *
- * All routes require authentication (ensureAuthnApi).
- *
- * These routes now use MongoDB aggregation ($lookup) to attach AniTitle
- * information based on the numeric `anilist_id` field. We do NOT use
- * Mongoose populate() for this field, since Screenshot.anilist_id is a Number,
- * not an ObjectId reference.
- *
- * ---------------------------------------------------------------------------
- *
- * GET /screenshots
- *   - Description:
- *       Returns all screenshots belonging to the authenticated user,
- *       with the AniTitle (ani) joined via $lookup on anilist_id.
- *
- *   - Params: none
- *   - Query: none
- *   - Body: none
- *
- *   - Response:
- *       {
- *         success: true,
- *         screenshots: [
- *           {
- *             _id: ObjectId,
- *             anilist_id: Number,
- *             sentence: String,
- *             translation: String,
- *             imageUrl: String,
- *             creator: ObjectId,
- *             ani: {                    // Joined from AniTitle
- *               anilist_id: Number,
- *               title: String,
- *               native_title: String,
- *               type: "ANIME" | "MANGA"
- *             },
- *             createdAt: Date,
- *             updatedAt: Date
- *           },
- *           ...
- *         ]
- *       }
- *
- * POST /screenshots
- *   - Description:
- *       Upload a screenshot (image file + metadata), create a Screenshot
- *       document, and automatically create a UserCard for it. The returned
- *       Screenshot includes full AniTitle information joined via $lookup.
- *
- *   - Auth: required
- *   - Body (multipart/form-data):
- *       - image        (file, required)
- *       - anilist_id   (string/number, required)
- *       - sentence     (string, required)
- *       - translation  (string, optional)
- *
- *   - Side effects:
- *       - Creates Screenshot
- *       - Attaches AniTitle via aggregation
- *       - Creates UserCard pointing to the Screenshot
- *
- *   - Response:
- *       {
- *         success: true,
- *         screenshot: {
- *           _id: ObjectId,
- *           anilist_id: Number,
- *           sentence: String,
- *           translation: String,
- *           imageUrl: String,
- *           creator: ObjectId,
- *           ani: { ... AniTitle fields ... }
- *         }
- *       }
- *
- * GET /screenshots/:id
- *   - Description:
- *       Fetch a single screenshot with AniTitle joined via $lookup.
- *
- *   - Auth: required, must own screenshot
- *   - Params:
- *       - id (Screenshot _id)
- *
- *   - Response:
- *       {
- *         success: true,
- *         screenshot: {
- *           _id: ObjectId,
- *           anilist_id: Number,
- *           sentence: String,
- *           translation: String,
- *           imageUrl: String,
- *           creator: ObjectId,
- *           ani: { ... AniTitle fields ... }
- *         }
- *       }
- *
- * PATCH /screenshots/:id
- *   - Description:
- *       Update a screenshot's metadata.
- *
- *   - Auth: required, must own screenshot
- *   - Params:
- *       - id (Screenshot _id)
- *   - Body (JSON):
- *       - Any updatable screenshot fields (sentence, translation)
- *
- *   - Response:
- *       { success: true, updated: Screenshot }
- *
- * DELETE /screenshots/:id
- *   - Description:
- *       Delete a screenshot, its associated vocab entries, and its user card.
- *
- *   - Auth: required, must own screenshot
- *   - Params:
- *       - id (Screenshot _id)
- *
- *   - Response:
- *       { success: true }
- *
- */
-
 import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+import multerS3 from 'multer-s3';
 import path from 'path';
-import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
+import { S3Client, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { Screenshot, UserCard, VocabEntry } from '../../models/db.mjs';
 import { ensureAuthnApi } from '../../middleware/authn.mjs';
 import { verifyScreenshotOwnership } from '../../middleware/authz.mjs';
@@ -138,18 +14,51 @@ import { verifyScreenshotOwnership } from '../../middleware/authz.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const uploadsDir = path.join(__dirname, '../../public/uploads');
+// Local storage version (replaced with S3)
+// const uploadsDir = path.join(__dirname, '../../public/uploads');
+
+// Configure S3 client
+const s3 = new S3Client({
+  region: process.env.AWS_REGION,
+})
 
 const MAX_SCREENSHOT_FILE_SIZE = 5 * 1024 * 1024 // 5 MB
 
 const router = express.Router();
 
+// const upload = multer({
+//   dest: uploadsDir,
+//   limits: {
+//     fileSize: MAX_SCREENSHOT_FILE_SIZE
+//   },
+//   fileFilter: (req, file, cb) => { // Calls 'cb' if file should be accepted
+//     const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+//     if (!allowed.includes(file.mimetype)) {
+//       return cb(new Error("Only image files are allowed."));
+//     }
+//     cb(null, true);
+//   }
+// });
+
+// Adds req.file with location (full HTTPS URL) and key (S3 Key) properties
 const upload = multer({
-  dest: uploadsDir,
+  storage: multerS3({
+    s3,
+    bucket: process.env.S3_BUCKET_NAME,
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    key: (req, file, cb) => {
+      // Unique file name per user
+      const ext = path.extname(file.originalname) || '';
+      const random = Math.round(Math.random() * 1e9);
+      const filename = `${Date.now()}-${random}${ext}`;
+      const key = `screenshots/${req.user._id}/${filename}`;
+      cb(null, key);
+    }
+  }),
   limits: {
     fileSize: MAX_SCREENSHOT_FILE_SIZE
   },
-  fileFilter: (req, file, cb) => { // Calls 'cb' if file should be accepted
+  fileFilter: (req, file, cb) => {
     const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     if (!allowed.includes(file.mimetype)) {
       return cb(new Error("Only image files are allowed."));
@@ -183,7 +92,6 @@ router.get('/', ensureAuthnApi, async (req, res, next) => {
   }
 });
 
-// TODO: verify file type using file-type with s3 (not local uploads)
 router.post('/', ensureAuthnApi, upload.single('image'), async (req, res, next) => {
   console.log("POST /api/screenshots")
   console.log("req.body:\n", req.body);
@@ -201,7 +109,8 @@ router.post('/', ensureAuthnApi, upload.single('image'), async (req, res, next) 
       anilist_id: Number(anilist_id), // Required conversion since HTML form values always Strings
       sentence,
       translation: translation,
-      imageUrl: `/uploads/${req.file.filename}`, // TODO: change for s3 implementation
+      imageUrl: req.file.location,
+      s3Key: req.file.key,
       creator: req.user._id
     });
 
@@ -259,6 +168,7 @@ router.post('/clone/:id', ensureAuthnApi, async (req, res, next) => {
       sentence: originalScreenshot.sentence,
       translation: originalScreenshot.translation,
       imageUrl: originalScreenshot.imageUrl,
+      s3Key: originalScreenshot.s3Key,
       creator: req.user._id
     });
 
@@ -358,26 +268,30 @@ router.delete('/:id', ensureAuthnApi, async (req, res, next) => {
 
     const screenshot = await Screenshot.findById(screenshotId);
     const imageUrl = screenshot.imageUrl;
+    const s3Key = screenshot.s3Key;
 
     await VocabEntry.deleteMany({ screenshot: screenshotId });
-
     await UserCard.deleteOne({ screenshot: screenshotId });
-
     await Screenshot.deleteOne({ _id: screenshotId });
 
-    // If there are no screenshots that still use this same iamge, delete the file
+    // If there are no screenshots that still use this same iamge, delete the S3 object
     const count = await Screenshot.countDocuments({ imageUrl });
-    if (count === 0) {
-      // TODO: change this for s3
+    if (count === 0 && s3Key) {
       try {
-        const filePath = path.join(__dirname, '../../public', imageUrl);
-        await fs.unlink(filePath);
-        console.log("Deleted unused image:", filePath);
+        // const filePath = path.join(__dirname, '../../public', imageUrl);
+        // await fs.unlink(filePath);
+        // console.log("Deleted unused image:", filePath);
+
+        await s3.send(new DeleteObjectCommand({
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: s3Key
+        }));
+        console.log("Deleted unused S3 image:", s3Key);
       } catch (err) {
-        console.error("Non-fatal error: Failed to delete image file", err);
+        console.error("Non-fatal error: Failed to delete S3 object", err);
       }
     } else {
-      console.log(`Image still used by ${count} screenshots, not deleting file.`);
+      console.log(`Image still used by ${count} screenshots, not deleting S3 object.`);
     }
 
     console.log("Deleted Screenshot ID:", screenshotId);

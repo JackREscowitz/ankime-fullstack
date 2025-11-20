@@ -1,37 +1,5 @@
 // src/routes/api/vocabApi.mjs
 
-/**
- * /vocab routes
- *
- * All routes require authentication (ensureAuthnApi).
- *
- * POST /vocab
- *   - Auth: required
- *   - Body (JSON or urlencoded):
- *       - screenshotId   (Screenshot _id, required; must belong to user)
- *       - word         (string, required)
- *       - reading      (string, optional)
- *       - meaning      (string, required)
- *       - partOfSpeech (string, required; one of enum values)
- *       - notes        (string, optional)
- *   - Response: { success: true, vocab: VocabEntry }
- *
- * PATCH /vocab/:id
- *   - Auth: required, must own vocab entry
- *   - Params:
- *       - id (VocabEntry _id)
- *   - Body (JSON):
- *       - Any subset of vocab fields to update
- *   - Response: { success: true, vocab: VocabEntry }
- *
- * DELETE /vocab/:id
- *   - Auth: required, must own vocab entry
- *   - Params:
- *       - id (VocabEntry _id)
- *   - Body: none
- *   - Response: { success: true }
- */
-
 import express from 'express';
 import multer from 'multer';
 import { VocabEntry } from '../../models/db.mjs';

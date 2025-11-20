@@ -52,7 +52,6 @@ const options = {
   }
 };
 
-// TODO: change page condition once done testing
 while (hasNextPage) {
   variables.page = page;
   options.body = JSON.stringify({ query, variables });

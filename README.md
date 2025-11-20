@@ -19,12 +19,12 @@ The application uses five collections:
 3. **VocabEntry**
    - Stores vocabulary items linked to a screenshot, including readings, meanings, and notes.
 4. **UserCard**
-   - Stores screenshots that belong to users, such that they can be edited and reviewable.
+   - Stores screenshots that belong to users, such that they can store review metadata.
 5. **AniTitle**
    - Stores anime/manga titles, regularly made up to date via Anilist API.
 
 ### Relationships
-- Each **Screenshot** can point to a **User** (creator).
+- Each **Screenshot** can point to a **User** (creator) and a **AniTitle**.
 - Multiple **VocabEntries** can point to a **Screenshot**.
 - Each **UserCard** can point to a **User** (owner) and **Screenshot**.
 
@@ -41,10 +41,12 @@ The application uses five collections:
 #### Example Screenshot
 ```javascript
 {
+  anilist_id: 16498,
   title: "Attack on Titan",
   sentence: "世界は残酷だ。",
   translation: "The world is cruel.",
-  imageUrl: // cloud database URL,
+  imageUrl: // Full S3 URL,
+  s3Key: // Unique identifier within S3
   public: true,
   creator: // reference to User,
   createdAt: ISODate("2025-10-29T20:00:00Z")
@@ -55,7 +57,7 @@ The application uses five collections:
 #### Example VocabEntry
 ```javascript
 {
-  screenshotId: // reference to Screenshot,
+  screenshot: // reference to Screenshot,
   word: "残酷",
   reading: "ざんこく",
   meaning: "cruel, harsh",
@@ -76,50 +78,58 @@ The application uses five collections:
   repetitions: 3,
   easeFactor: 2.5,
   nextReview: ISODate("2025-12-25T20:00:00Z")
-  createdAt: ISODate("2025-10-29T20:00:00Z"),
-  updatedAt: ISODate("2025-11-13T20:00:00Z")
+  createdAt: ISODate("2025-11-29T20:00:00Z"),
+  updatedAt: ISODate("2025-12-09T20:00:00Z")
 }
 ```
 
 ### Example AniTitle
 ```javascript
 {
-  anilist_id: 123,
+  anilist_id: 16498,
   title: "Attack on Titan",
-  native_title: "Shingeki no Kyojin",
-  type: "MANGA",
-  updated_at: ISODate("2025-11-13T20:00:00Z")
+  native_title: "進撃の巨人",
+  type: "ANIME",
+  updated_at: ISODate("2025-10-20T20:00:00Z")
 }
 ```
 ---
 
-## [Link to Commented First Draft Schema](models/db.mjs)
+## [Link to Models Directory](models/)
 
-Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and commented in `models/db.mjs`.
-
----
+Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and commented in `models/db.mjs`. The `AniTitle` Schema is in `models/aniTitle.mjs`.
 
 ## Wireframes
 
 ### `/` - Homepage  
-Displays search bar and list of recent uploads.  
-![wireframe-home](documentation/wireframe-home.png)
+Displays search bar.
+
+![home-page](documentation/home-page.png)
 
 ### `/user/login` - Login Page  
-Page for logging in with username and password.  
-![wireframe-user-login](documentation/wireframe-user-login.png)
+Page for logging in with username and password.
+
+![login-page](documentation/login-page.png)
 
 ### `/user/register` - Register Page  
-Page for registering with username and password.  
-![wireframe-user-register](documentation/wireframe-user-register.png)
+Page for registering with username and password.
+
+![register-page](documentation/register-page.png)
 
 ### `/my-cards` - My Cards Page  
 Page for actions relevant to cards the user owns.  
-![wireframe-my-cards](documentation/wireframe-my-cards.png)
+
+![my-cards-page](documentation/my-cards-page.png)
 
 ### `/my-cards/upload` - Upload Screenshot Page  
 Page for uploading screenshots and adding vocab entries.  
-![wireframe-my-cards-upload](documentation/wireframe-my-cards-upload.png)
+
+![upload-page](documentation/upload-page.png)
+
+### `/my-cards/review` - Review Page
+Page for reviewing cards.
+
+![review-page](documentation/review-page.png)
 
 ---
 
@@ -127,7 +137,6 @@ Page for uploading screenshots and adding vocab entries.
 
 ```
 Home
- ├── Browse Screenshots (/browse)
  ├── Register (/user/register)
  ├── Login (/user/login)
  ├── About (/about)
@@ -141,11 +150,13 @@ Home
 
 ## User Stories
 
-1. As a user, I can upload a screenshot with Japanese text and translation.  
-2. As a user, I can add vocabulary entries to a screenshot.  
-3. As a user, I can browse screenshots uploaded by others.  
-4. As a user, I can search for screenshots by anime title or vocabulary.  
-5. As a user, I can edit or delete my uploads.  
+1. As a non-registered user, I can browse the publicly available cards.  
+2. As a non-registered user, I can register a new account with the site.  
+3. As a user, I can log into the site
+4. As a user, I can add publicly available cards to my own deck.
+5. As a user, I can make my own cards in the upload page.
+6. As a user, I can browse my own cards.
+7. As a user, I can do Spaced Repetition System (SRS) based reviews with my cards.
 
 ---
 
@@ -153,12 +164,12 @@ Home
 
 | Topic | Description | Points |
 |-------|--------------|--------|
-| **Tailwind CSS** | For styling and responsive anime-themed UI | 2 |
-| **ESLint + Vite** | For build automation and linting workflow | 3 |
-| **Multer** | For screenshot upload | 1 |
-| **AWS S3** | For image hosting in the cloud | 3 |
+| **Tailwind CSS + PostCSS** | For styling and responsive anime-themed UI | 2 |
+| **multer + multer-S3** | For screenshot upload | 2 |
+| **AWS S3 + AWS SDK S3 Client** | For image hosting in the cloud | 3 |
 | **AniList API** | For fetching up to date list of anime/manga | 2 |
-| **Total** |  | **11** |
+| **express-rate-limit** | For limiting requests to prevent abuse | 1 |
+| **Total** |  | **10** |
 
 ---
 
@@ -171,3 +182,4 @@ Home
 3. NPM documentation
 4. Anilist API docs
 5. Tailwind CSS docs — styling  
+6. AWS S3 docs — Bucket setup, usage, IAM roles and users

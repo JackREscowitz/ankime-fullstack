@@ -28,7 +28,8 @@ const screenshotSchema = new mongoose.Schema({
   anilist_id: { type: Number, required: true }, 
   sentence: { type: String, required: true },
   translation: String,
-  imageUrl: { type: String, required: true },
+  imageUrl: { type: String, required: true }, // Full S3 URL
+  s3Key: { type: String, required: true },    // Unique identifier within S3
   public: { type: Boolean, default: false },
   creator: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 }, { timestamps: true });

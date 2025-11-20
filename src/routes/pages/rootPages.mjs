@@ -13,6 +13,4 @@ router.get('/about', (req, res) => {
   res.render('about');
 })
 
-// TODO: implement browsing, should allow downloading if authenticated
-
 export default router;

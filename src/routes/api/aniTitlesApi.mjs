@@ -1,14 +1,5 @@
 // src/routes/api/aniTitlesApi.mjs
 
-/**
- * /anititles routes
- *
- * GET /anititles/:anilist_id
- *   - Params:
- *       - anilist_id (Number or string convertible to Number)
- *   - Response: { success: true, aniTitle: AniTitle }
- */
-
 import express from 'express';
 import { AniTitle } from '../../models/aniTitle.mjs';
 

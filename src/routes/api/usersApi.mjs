@@ -2,12 +2,13 @@
 
 import express from 'express';
 import passport from 'passport';
+import { authLimiter } from '../../middleware/rateLimit.mjs';
 import { User } from '../../models/db.mjs';
 
 const router = express.Router();
 
-// TODO: add minimum password security somehow
-router.post('/register', async (req, res, next) => {
+// TODO: add minimum password security in the future
+router.post('/register', authLimiter, async (req, res, next) => {
   console.log("POST /api/users/register");
   console.log("req.body:\n", req.body);
   try {
@@ -27,13 +28,12 @@ router.post('/register', async (req, res, next) => {
   }
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login', authLimiter, (req, res, next) => {
   console.log("POST /api/users/login");
   console.log("req.body:\n", req.body);
   passport.authenticate('local', (err, user, info) => {
     if (err) return next(err);
     if (!user) {
-      // TODO: could streamline this in middleware?
       err = new Error(info?.message || "Bad credentials.");
       err.status = 401;
       return next(err);
