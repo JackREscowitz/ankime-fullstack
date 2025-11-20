@@ -59,7 +59,6 @@ Description of research topics above with points
 
 Links to github line number(s) for research topics described above (one link per line)
 ---
-(TODO: add link to github line number(s), one per line for research topics ... for example, if using auth/passport, link to auth.js or where bulk of auth code is)
 - [TailwindCSS + PostCSS](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/public/css/tailwind.css#L1)
 - [multer + multer-S3](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/routes/api/screenshotsApi.mjs#L43-L68)
 - [AWS S3 + AWS SDK S3 Client](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/routes/api/screenshotsApi.mjs#L285-L288)
