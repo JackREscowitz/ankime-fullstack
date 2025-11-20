@@ -258,7 +258,6 @@ router.patch('/:id', ensureAuthnApi, async (req, res, next) => {
   }
 });
 
-// TODO: also delete image file from uploads (or s3)
 router.delete('/:id', ensureAuthnApi, async (req, res, next) => {
   console.log("DELETE /api/screenshots/:id");
 
