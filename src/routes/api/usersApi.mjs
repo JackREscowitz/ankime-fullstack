@@ -7,10 +7,38 @@ import { User } from '../../models/db.mjs';
 
 const router = express.Router();
 
-// TODO: add minimum password security in the future
+const MIN_USERNAME_LENGTH = 5;
+const MIN_PASSWORD_LENGTH = 8;
+
+// TODO: add stronger password security in the future
 router.post('/register', authLimiter, async (req, res, next) => {
   console.log("POST /api/users/register");
   console.log("req.body:\n", req.body);
+
+  const { username, password } = req.body;
+
+  // Validation
+  if (username.length < MIN_USERNAME_LENGTH) {
+    return res.status(400).json({
+      success: false,
+      message: `Username must be at least ${MIN_USERNAME_LENGTH} characters long.`
+    });
+  }
+
+  if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+    return res.status(400).json({
+      success: false,
+      message: "Username may only contain letters, numbers, and underscores."
+    });
+  }
+
+  if (password.length < MIN_PASSWORD_LENGTH) {
+    return res.status(400).json({
+      success: false,
+      message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+    });
+  }
+  
   try {
     const user = await User.register(
       new User({ username: req.body.username }),

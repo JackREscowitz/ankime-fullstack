@@ -11,64 +11,62 @@ Jack Escowitz
 
 Repository Link
 ---
-(TODO: add the link to your repository in github, such as, https://github.com/[COURSE]/[REPO_NAME])
+https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz
 
 URL for deployed site 
 ---
-(TODO: add url for your dpeloyed site)
+https://final-project-jackrescowitz.onrender.com
 
 URL for form 1 (from previous milestone) 
 ---
-(TODO: add link to a functioning form)
-
-Special Instructions for Form 1
----
-(TODO: if your app requires special instructions to use or if your app requires authentication, add information here; otherwise, leave blank)
+https://final-project-jackrescowitz.onrender.com/user/login
 
 URL for form 2 (for current milestone)
 ---
-(TODO: if applicable, add link to page that shows results of submitting form)
-
-Special Instructions for Form 2
----
-(TODO: if your app requires special instructions to use or if your app requires authentication, add information here; otherwise, leave blank)
+https://final-project-jackrescowitz.onrender.com/my-cards
 
 URL for form 3 (from previous milestone) 
 ---
-(TODO: add link to a functioning form)
-
-Special Instructions for Form 3
----
-(TODO: if your app requires special instructions to use or if your app requires authentication, add information here; otherwise, leave blank)
+https://final-project-jackrescowitz.onrender.com/my-cards/upload
 
 First link to github line number(s) for constructor, HOF, etc.
 ---
-(TODO: add link to line number(s) here) 
+https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/public/js/main.js#L38
 
 Second link to github line number(s) for constructor, HOF, etc.
 ---
-(TODO: add link to line number(s) here) 
+https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/public/js/main.js#L96
 
 Short description for links above
 ---
-(TODO: describe what each link above is, one line each... for example: myFunction is a hof that retrieves json from a url, map is used to transform the Array of Person objects into an Array of strings that represents names)
+`createCard` is a higher order function that takes the `btnFunctions` as an argument, 
+which contains potentially three different functions, each, if they are provided, 
+act as the functions for three potential buttons attached to a card.  
+`createScreenshot` is a higher order function that takes the `onDelete` function as an 
+argument, which if provided, acts as the function for a button that deletes a Screenshot.
 
 Link to github line number(s) for schemas (db.js or models folder)
 ---
-(TODO: add link to schemas)
+https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/tree/5134e63166d5a682325ef6647230110b973cc0cd/src/models
 
 Description of research topics above with points
 ---
-(TODO: add description of research topics here, including point values for each, one per line... for example: 2 points - applied and modified "Clean Blog" Bootstrap theme)
+- **TailwindCSS + PostCSS** (2 points): for styling and responsive anime-themed UI.
+- **multer + multer-S3** (2 points): for screenshot upload.
+- **AWS S3 + AWS SDK S3 Client** (3 points): For image hosting in the cloud.
+- **AniList API** (2 points): For fetching up to date list of anime/manga.
+- **express-rate-limit** (1 point): For limiting requests to prevent abuse.
 
 Links to github line number(s) for research topics described above (one link per line)
 ---
 (TODO: add link to github line number(s), one per line for research topics ... for example, if using auth/passport, link to auth.js or where bulk of auth code is)
-
-Optional project notes 
---- 
-(TODO: optionally add add any other information required for using/testing the final project)
+- [TailwindCSS + PostCSS](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/public/css/tailwind.css#L1)
+- [multer + multer-S3](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/routes/api/screenshotsApi.mjs#L43-L68)
+- [AWS S3 + AWS SDK S3 Client](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/routes/api/screenshotsApi.mjs#L285-L288)
+- [AniList API](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/scripts/syncAnilist.mjs#L1-L128)
+- [express-rate-limit](https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/blob/5134e63166d5a682325ef6647230110b973cc0cd/src/middleware/rateLimit.mjs#L1-L24)
 
 Attributions
 ---
-(TODO:  list sources that you have based your code off of, 1 per line, with file name, a very short description, and an accompanying url... for example: routes/index.js - Authentication code based off of http://foo.bar/baz ... alternatively, if you have already placed annotations in your project, answer "See source code comments")
+- src/scripts/syncAnilist.mjs: Query code based off of [Anilist API Docs](https://docs.anilist.co/guide/graphql/pagination).
+- src/utils/srs.mjs: SM-2 algorithm code based off of [Supermemo method](https://www.supermemo.com/en/blog/application-of-a-computer-to-improve-the-results-obtained-in-working-with-the-supermemo-method).

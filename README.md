@@ -164,7 +164,7 @@ Home
 
 | Topic | Description | Points |
 |-------|--------------|--------|
-| **Tailwind CSS + PostCSS** | For styling and responsive anime-themed UI | 2 |
+| **TailwindCSS + PostCSS** | For styling and responsive anime-themed UI | 2 |
 | **multer + multer-S3** | For screenshot upload | 2 |
 | **AWS S3 + AWS SDK S3 Client** | For image hosting in the cloud | 3 |
 | **AniList API** | For fetching up to date list of anime/manga | 2 |
