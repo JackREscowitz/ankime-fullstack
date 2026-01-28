@@ -1,25 +1,22 @@
 {
-  "name": "final-project-jackrescowitz",
+  "name": "ankime",
   "version": "1.0.0",
-  "description": "The content below is an example project proposal / requirements document. Replace the text below the lines marked \"__TODO__\" with details specific to your project. Remove the \"TODO\" lines.",
+  "description": "A full-stack web app that turns anime screenshots into visual flashcards for Japanese language learning.",
   "main": "index.js",
   "scripts": {
     "build:css": "postcss src/public/css/tailwind.css -o src/public/css/main.css",
-    "start": "npm run build:css && node src/app.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "npm run build:css && node src/app.mjs",
+    "start": "node src/app.mjs",
     "sync:anilist": "node src/scripts/syncAnilist.mjs"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz.git"
+    "url": "https://github.com/JackREscowitz/ankime-fullstack.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "bugs": {
-    "url": "https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz/issues"
+    "url": "https://github.com/JackREscowitz/ankime-fullstack/issues"
   },
-  "homepage": "https://github.com/nyu-csci-ua-0467-001-002-fall-2025/final-project-JackREscowitz#readme",
+  "homepage": "https://github.com/JackREscowitz/ankime-fullstack#readme",
   "dependencies": {
     "@aws-sdk/client-s3": "^3.936.0",
     "@tailwindcss/postcss": "^4.1.17",

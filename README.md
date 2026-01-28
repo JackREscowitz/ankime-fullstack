@@ -1,185 +1,162 @@
 # Ankime
 
-## Overview
+**Ankime** is a full-stack web application that turns anime screenshots into
+**visual flashcards** for Japanese language learners.
 
-Flashcard tools like Anki are effective for rote memorization, but they can get repetitive.  
-**Ankime** brings Japanese learning to life by letting users upload screenshots from their favorite anime, along with the Japanese sentence and its vocabulary breakdown.  
-
-Each screenshot becomes a *visual flashcard*, helping users connect words to real scenes.  
-Users can search by anime title, vocabulary, or uploader to discover new words through meaningful context.
-
-## Data Model
-
-The application uses five collections:
-
-1. **User**
-   - Stores user login information.
-2. **Screenshot**
-   - Stores each uploaded anime/manga scene with Japanese text, English translation, and metadata.
-3. **VocabEntry**
-   - Stores vocabulary items linked to a screenshot, including readings, meanings, and notes.
-4. **UserCard**
-   - Stores screenshots that belong to users, such that they can store review metadata.
-5. **AniTitle**
-   - Stores anime/manga titles, regularly made up to date via Anilist API.
-
-### Relationships
-- Each **Screenshot** can point to a **User** (creator) and a **AniTitle**.
-- Multiple **VocabEntries** can point to a **Screenshot**.
-- Each **UserCard** can point to a **User** (owner) and **Screenshot**.
-
-### Sample Documents
-
-#### Example User
-```javascript
-{
-  username: "faust",
-  hash: // a password hash here
-}
-```
-
-#### Example Screenshot
-```javascript
-{
-  anilist_id: 16498,
-  title: "Attack on Titan",
-  sentence: "世界は残酷だ。",
-  translation: "The world is cruel.",
-  imageUrl: // Full S3 URL,
-  s3Key: // Unique identifier within S3
-  public: true,
-  creator: // reference to User,
-  createdAt: ISODate("2025-10-29T20:00:00Z")
-  updatedAt: ISODate("2025-11-13T20:00:00Z")
-}
-```
-
-#### Example VocabEntry
-```javascript
-{
-  screenshot: // reference to Screenshot,
-  word: "残酷",
-  reading: "ざんこく",
-  meaning: "cruel, harsh",
-  partOfSpeech: "na-adjective",
-  notes: "Commonly used in dramatic dialogue"
-}
-```
-
-### Example UserCard
-```javascript
-{
-  user: // reference to User,
-  screenshot: // reference to Screenshot,
-
-  // Review State
-  isInReview: true,
-  interval: 16,
-  repetitions: 3,
-  easeFactor: 2.5,
-  nextReview: ISODate("2025-12-25T20:00:00Z")
-  createdAt: ISODate("2025-11-29T20:00:00Z"),
-  updatedAt: ISODate("2025-12-09T20:00:00Z")
-}
-```
-
-### Example AniTitle
-```javascript
-{
-  anilist_id: 16498,
-  title: "Attack on Titan",
-  native_title: "進撃の巨人",
-  type: "ANIME",
-  updated_at: ISODate("2025-10-20T20:00:00Z")
-}
-```
----
-
-## [Link to Models Directory](src/models/)
-
-Schemas for `User`, `Screenshot`, `VocabEntry`, and `UserCard` are included and commented in `src/models/db.mjs`. The `AniTitle` Schema is in `src/models/aniTitle.mjs`.
-
-## Wireframes
-
-### `/` - Homepage  
-Displays search bar.
-
-![home-page](documentation/home-page.png)
-
-### `/user/login` - Login Page  
-Page for logging in with username and password.
-
-![login-page](documentation/login-page.png)
-
-### `/user/register` - Register Page  
-Page for registering with username and password.
-
-![register-page](documentation/register-page.png)
-
-### `/my-cards` - My Cards Page  
-Page for actions relevant to cards the user owns.  
-
-![my-cards-page](documentation/my-cards-page.png)
-
-### `/my-cards/upload` - Upload Screenshot Page  
-Page for uploading screenshots and adding vocab entries.  
-
-![upload-page](documentation/upload-page.png)
-
-### `/my-cards/review` - Review Page
-Page for reviewing cards.
-
-![review-page](documentation/review-page.png)
+Instead of drilling abstract vocabulary lists, Ankime lets users upload real
+scenes from anime or manga, attach the Japanese sentence and its vocabulary
+breakdown, and review them using a spaced-repetition-style system.  
+The goal is to anchor vocabulary in **visual and narrative context**.
 
 ---
 
-## Site Map
+## Features
+
+- **User authentication**
+  - Registration and login via username and password
+  - Session-based authentication with Passport
+
+- **Screenshot-based flashcards**
+  - Upload anime/manga screenshots
+  - Add Japanese sentence, English translation, and vocab entries
+  - Public and private cards
+
+- **Vocabulary breakdown**
+  - Per-word entries with reading, meaning, part of speech, and notes
+
+- **Spaced Repetition–style review**
+  - Cards store review metadata (interval, repetitions, ease factor)
+  - Review queue shows cards due for practice
+
+- **Search & discovery**
+  - Browse public cards
+  - Search by anime title, vocabulary, or uploader
+
+- **Anime metadata integration**
+  - Anime and manga titles synced via the AniList API
+
+---
+
+## Screenshots
+
+![Upload screenshot](documentation/upload-page.png)
+![Review page](documentation/review-page.png)
+
+---
+
+## Tech Stack
+
+**Backend**
+- Node.js
+- Express
+- MongoDB + Mongoose
+- Passport (local strategy)
+- express-session
+- express-rate-limit
+
+**Frontend**
+- Server-rendered views using Handlebars (hbs)
+- TailwindCSS + PostCSS for styling
+
+**Storage & Integrations**
+- AWS S3 for image storage
+- multer + multer-s3 for uploads
+- AniList API for anime/manga metadata
+
+---
+
+## Data Model Overview
+
+The application uses five main collections:
+
+- **User** — authentication and account data  
+- **Screenshot** — uploaded images with sentence, translation, and metadata  
+- **VocabEntry** — vocabulary items linked to a screenshot  
+- **UserCard** — per-user review state for screenshots  
+- **AniTitle** — anime/manga titles synced from AniList  
+
+Relationships are designed so that:
+- A screenshot can have multiple vocabulary entries
+- Users can save screenshots to their own deck with independent review data
+- Public cards can be reused by multiple users
+
+---
+
+## Getting Started (Local Development)
+
+### Prerequisites
+
+- **Node.js** (v18+ recommended)
+- **npm**
+- **MongoDB** (local or hosted)
+- **AWS S3 bucket** (for image uploads)
+
+---
+
+### Installation
+
+```bash
+git clone https://github.com/JackREscowitz/ankime-fullstack.git
+cd ankime-fullstack
+npm install
+````
+
+---
+
+### Environment Variables
+
+Create a `.env` file in the project root:
+
+```env
+PORT=3000
+DSN=mongodb://127.0.0.1/ankime
+SECRET=your_session_secret
+
+AWS_REGION=us-east-1
+S3_BUCKET_NAME=your_s3_bucket_name
+AWS_ACCESS_KEY_ID=your_access_key
+AWS_SECRET_ACCESS_KEY=your_secret_key
+```
+
+> ⚠️ Do not commit your `.env` file. It is excluded by `.gitignore`.
+
+---
+
+### Running the App
+
+```bash
+npm run dev
+```
+
+Then open:
 
 ```
-Home
- ├── Register (/user/register)
- ├── Login (/user/login)
- ├── About (/about)
- └── My Cards (/my-cards)
-       ├── Upload Screenshot (/upload)
-       ├── Browse My Cards (/browse)
-       └── Review (/review)
+http://localhost:3000
 ```
 
 ---
 
-## User Stories
+### Syncing AniList Titles
 
-1. As a non-registered user, I can browse the publicly available cards.  
-2. As a non-registered user, I can register a new account with the site.  
-3. As a user, I can log into the site
-4. As a user, I can add publicly available cards to my own deck.
-5. As a user, I can make my own cards in the upload page.
-6. As a user, I can browse my own cards.
-7. As a user, I can do Spaced Repetition System (SRS) based reviews with my cards.
+To fetch or update anime/manga titles from AniList:
+
+```bash
+npm run sync:anilist
+```
 
 ---
 
-## Research Topics
+## Project Background
 
-| Topic | Description | Points |
-|-------|--------------|--------|
-| **TailwindCSS + PostCSS** | For styling and responsive anime-themed UI | 2 |
-| **multer + multer-S3** | For screenshot upload | 2 |
-| **AWS S3 + AWS SDK S3 Client** | For image hosting in the cloud | 3 |
-| **AniList API** | For fetching up to date list of anime/manga | 2 |
-| **express-rate-limit** | For limiting requests to prevent abuse | 1 |
-| **Total** |  | **10** |
+This project originated as a university course assignment and has since been
+cleaned up and maintained as a personal project to showcase full-stack
+development skills, API integration, and cloud-based file storage.
 
 ---
 
-## [Link to Initial Main Project File](src/app.mjs)
+## Future Improvements
 
-## Annotations / References Used
-
-1. Express documentation — server setup reference  
-2. Mongoose docs — schema examples  
-3. NPM documentation
-4. Anilist API docs
-5. Tailwind CSS docs — styling  
-6. AWS S3 docs — Bucket setup, usage, IAM roles and users
+* More advanced SRS algorithms and analytics
+* Deck sharing and following other users
+* Improved mobile UX
+* Optional deployment as a PWA
